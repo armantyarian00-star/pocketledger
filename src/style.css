@@ -1136,51 +1136,298 @@ html.theme-dark .tab-dec { background: #1a2233; color: #e2e8f0; }
 .autosave-pill.active { background: var(--accent-light); color: var(--accent); }
 .autosave-pill.inactive { background: var(--surface-border); color: var(--text-muted); }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
+/* ==================================================== */
+/* RESPONSIVE & MOBILE SMARTPHONE ARCHITECTURE          */
+/* ==================================================== */
+@media (max-width: 820px) {
   html, body {
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .planner-app {
-    height: auto;
-    flex-direction: column;
-    overflow: visible;
+    display: block !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
   }
+  /* Desktop sidebar hidden on mobile */
   .sidebar {
-    width: 100%;
-    height: auto;
-    border-right: none;
-    border-bottom: 1px solid var(--surface-border);
-    padding: 16px;
+    display: none !important;
   }
+  /* Month rail hidden on mobile */
   .month-rail {
-    width: 100%;
-    height: auto;
-    flex-direction: row;
-    overflow-x: auto;
-    padding: 8px 12px;
-  }
-  .month-tab {
-    writing-mode: horizontal-tb;
-    transform: none;
-    border-radius: var(--radius-sm);
-    padding: 6px 12px;
-    margin: 0 4px;
-    flex: none;
-  }
-  .month-tab.active {
-    margin-left: 4px;
-    margin-top: -3px;
+    display: none !important;
   }
   .main-canvas {
-    height: auto;
-    overflow: visible;
-    padding: 16px;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+    padding: 12px 14px calc(84px + env(safe-area-inset-bottom, 16px)) 14px !important;
   }
 }
 
-.screen { display: none; flex-direction: column; gap: 20px; }
+.screen { display: none; flex-direction: column; gap: 16px; }
 .screen.active { display: flex; }
+
+/* Mobile Bottom Navigation Bar (Fixed Dock) */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(58px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: var(--surface);
+  border-top: 1px solid var(--surface-border);
+  box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.07);
+  z-index: 1000;
+  justify-content: space-around;
+  align-items: center;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+@media (max-width: 820px) {
+  .mobile-bottom-nav {
+    display: flex !important;
+  }
+}
+
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 6px 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bottom-nav-item svg {
+  stroke-width: 2;
+  transition: transform 0.15s ease, stroke 0.15s ease;
+}
+
+.bottom-nav-item.active {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.bottom-nav-item.active svg {
+  stroke: var(--primary);
+  transform: translateY(-1px);
+}
+
+/* Mobile Top Header Elements */
+.mobile-brand-pill {
+  display: none;
+}
+
+@media (max-width: 820px) {
+  .workspace-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--surface-border);
+  }
+
+  /* On non-Today screens on mobile, collapse the greeting to give full screen to the tab content */
+  body:not([data-active-tab="today"]) .workspace-header .date-eyebrow,
+  body:not([data-active-tab="today"]) .workspace-header .greeting-headline,
+  body:not([data-active-tab="today"]) .workspace-header .greeting-sub {
+    display: none !important;
+  }
+
+  body:not([data-active-tab="today"]) .workspace-header {
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+  }
+
+  .mobile-brand-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .mobile-brand-badge {
+    width: 24px;
+    height: 24px;
+    font-size: 13px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-brand-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--text-main);
+  }
+
+  .top-nav-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 8px;
+  }
+
+  #btn-header-log-trigger {
+    display: none !important;
+  }
+
+  #btn-header-quick-actions {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .quick-action-btn-text {
+    font-size: 0.8rem;
+  }
+
+  .shortcut-kbd {
+    display: none !important;
+  }
+
+  .view-mode-toggle {
+    flex-shrink: 0;
+  }
+}
+
+/* Sub-screen Mobile Back Button */
+.mobile-sub-back-btn {
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--primary);
+  cursor: pointer;
+  width: fit-content;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+@media (max-width: 820px) {
+  .mobile-sub-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
+
+/* More Screen Hub Layout */
+.more-screen-header {
+  margin-bottom: 6px;
+}
+
+.more-nav-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.more-nav-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  text-align: left;
+  user-select: none;
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.more-nav-card:active {
+  transform: scale(0.99);
+  border-color: var(--primary);
+  background: var(--surface-muted);
+}
+
+.more-nav-card.primary-card {
+  background: color-mix(in srgb, var(--primary) 8%, var(--surface));
+  border-color: color-mix(in srgb, var(--primary) 35%, transparent);
+}
+
+.more-card-icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--surface-muted);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.more-card-icon-box.primary {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.more-card-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.more-card-title {
+  font-size: 0.96rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0 0 2px 0;
+}
+
+.more-card-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.more-card-arrow {
+  color: var(--text-muted);
+  font-size: 1.25rem;
+  font-weight: 300;
+  padding-left: 4px;
+}
+
+.more-user-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface-muted);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-lg);
+  margin-top: 6px;
+}
 
 /* ==================================================== */
 /* MODAL DIALOGS (Clean Popups for Log & Balance)       */
@@ -2897,35 +3144,75 @@ html.theme-dark .sync-check-icon {
   line-height: 1.25;
 }
 
-/* Mobile Floating Action Button */
+/* Mobile Floating Action Button (hidden in favor of in-flow button like reference video) */
 .mobile-fab {
+  display: none !important;
+}
+
+/* Mobile Main In-flow Log Button (matches reference app frame 006) */
+.mobile-main-log-btn {
   display: none;
-  position: fixed;
-  bottom: 24px;
-  right: 20px;
-  z-index: 80;
-  background: var(--primary);
-  color: #ffffff;
-  border: none;
-  border-radius: 999px;
-  padding: 12px 20px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.28);
+  width: 100%;
+  padding: 13px 20px;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  justify-content: center;
   align-items: center;
   gap: 8px;
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 4px 14px rgba(109, 40, 217, 0.22);
+  margin-bottom: 2px;
 }
 
-.mobile-fab:active {
-  transform: scale(0.96);
-}
-
-@media (max-width: 768px) {
-  .mobile-fab {
+@media (max-width: 820px) {
+  .mobile-main-log-btn {
     display: inline-flex;
   }
+}
+
+/* Quick Spend Action Pills (matches reference app frame 008) */
+.quick-spend-pills {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--surface-border);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.btn-quick-spend {
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s ease, filter 0.15s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-quick-spend:active {
+  transform: scale(0.95);
+}
+
+.quick-spend-groceries {
+  background: #ecfdf5;
+  color: #047857;
+  border-color: #a7f3d0;
+}
+
+.quick-spend-takeout {
+  background: #fffbeb;
+  color: #b45309;
+  border-color: #fde68a;
+}
+
+.quick-spend-gas {
+  background: #f0f9ff;
+  color: #0369a1;
+  border-color: #bae6fd;
 }
 
 /* 1-Click Floating Undo Toast */
@@ -2940,6 +3227,14 @@ html.theme-dark .sync-check-icon {
   flex-direction: column;
   gap: 8px;
   pointer-events: none;
+}
+
+@media (max-width: 820px) {
+  .toast-container {
+    bottom: calc(72px + env(safe-area-inset-bottom, 14px));
+    right: 14px;
+    left: 14px;
+  }
 }
 
 .toast-item {

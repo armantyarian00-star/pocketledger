@@ -162,16 +162,31 @@ let selectedCalDateStr = getTodayStr();
 const navLinks = document.querySelectorAll('.nav-link');
 const screens = document.querySelectorAll('.screen');
 const monthTabs = document.querySelectorAll('.month-tab');
+const bottomNavItems = document.querySelectorAll('.bottom-nav-item');
 
 function setActiveTab(tabName: string) {
+  document.body.setAttribute('data-active-tab', tabName);
   navLinks.forEach(b => b.classList.remove('active'));
+  bottomNavItems.forEach(b => b.classList.remove('active'));
   screens.forEach(s => s.classList.remove('active'));
 
   const activeBtn = document.querySelector(`.nav-link[data-tab="${tabName}"]`);
   if (activeBtn) activeBtn.classList.add('active');
 
+  const primaryBottomTabs = ['today', 'month', 'bills', 'goals', 'more'];
+  if (primaryBottomTabs.includes(tabName)) {
+    const activeBottomBtn = document.querySelector(`.bottom-nav-item[data-tab="${tabName}"]`);
+    if (activeBottomBtn) activeBottomBtn.classList.add('active');
+  } else {
+    // Sub-screens under More (envelopes, debt, income, milestones, settings) highlight "More" in bottom nav
+    const moreBottomBtn = document.querySelector(`.bottom-nav-item[data-tab="more"]`);
+    if (moreBottomBtn) moreBottomBtn.classList.add('active');
+  }
+
   const targetScreen = document.getElementById(`screen-${tabName}`);
   if (targetScreen) targetScreen.classList.add('active');
+
+  window.scrollTo({ top: 0, behavior: 'instant' });
 
   if (tabName === 'month') {
     renderCalendar();
@@ -204,7 +219,43 @@ function navigateToTab(tabName: string) {
 navLinks.forEach(btn => {
   btn.addEventListener('click', () => {
     const tabName = btn.getAttribute('data-tab');
-    if (tabName) setActiveTab(tabName);
+    if (tabName) navigateToTab(tabName);
+  });
+});
+
+bottomNavItems.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tabName = btn.getAttribute('data-tab');
+    if (tabName) navigateToTab(tabName);
+  });
+});
+
+// "More" screen cards and triggers
+document.querySelectorAll('[data-more-tab]').forEach(card => {
+  card.addEventListener('click', () => {
+    const tabName = card.getAttribute('data-more-tab');
+    if (tabName) navigateToTab(tabName);
+  });
+});
+
+const btnMoreLogCard = document.getElementById('btn-more-log-card');
+if (btnMoreLogCard) {
+  btnMoreLogCard.addEventListener('click', () => {
+    openLogSpendModal();
+  });
+}
+
+const btnMoreHowItWorks = document.getElementById('btn-more-how-it-works');
+if (btnMoreHowItWorks) {
+  btnMoreHowItWorks.addEventListener('click', () => {
+    openHowItWorksModal();
+  });
+}
+
+// Mobile sub-screens back to More buttons
+document.querySelectorAll('.mobile-sub-back-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    setActiveTab('more');
   });
 });
 
@@ -2780,10 +2831,41 @@ document.getElementById('row-chk-log-today')?.addEventListener('click', () => {
   openLogSpendModal();
 });
 
-// Sidebar & Page Log Spend Triggers
+// Sidebar, Mobile & Page Log Spend Triggers
 sidebarLogWell?.addEventListener('click', () => openLogSpendModal());
 btnSidebarLogLaunch?.addEventListener('click', () => openLogSpendModal());
 document.getElementById('btn-open-log-from-list')?.addEventListener('click', () => openLogSpendModal());
+document.getElementById('btn-mobile-main-log')?.addEventListener('click', () => openLogSpendModal());
+
+// Quick Spend Action Pills (+ Groceries $25, + Takeout $15, + Gas $20)
+document.querySelectorAll('.btn-quick-spend').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const cat = btn.getAttribute('data-quick-cat') || 'Food';
+    const amtStr = btn.getAttribute('data-quick-amount') || '15.00';
+    const totalCents = Math.round(parseFloat(amtStr) * 100);
+    const txDate = getTodayStr();
+
+    const prevTransactions = [...state.transactions];
+    state = addTransaction(state, totalCents, cat, txDate, `Quick ${cat}`);
+    const newTx = state.transactions.find(t => !prevTransactions.some(p => p.id === t.id));
+
+    persistState();
+    renderAll();
+
+    if (newTx) {
+      showUndoToast(`Logged ${fmt(totalCents)} · ${cat}`, () => {
+        state = {
+          ...state,
+          transactions: state.transactions.filter(t => t.id !== newTx.id)
+        };
+        persistState();
+        renderAll();
+      });
+    }
+  });
+});
+
 sidebarLogPanel?.addEventListener('click', (e) => {
   if (e.target === sidebarLogPanel || (e.target as HTMLElement).closest('.sidebar-log-head')) {
     openLogSpendModal();
@@ -2874,7 +2956,10 @@ btnModalLogSubmit?.addEventListener('click', () => {
 
   if (newTx) {
     showUndoToast(`Logged ${fmt(totalCents)} · ${category}`, () => {
-      state.transactions = state.transactions.filter(t => t.id !== newTx.id);
+      state = {
+        ...state,
+        transactions: state.transactions.filter(t => t.id !== newTx.id)
+      };
       persistState();
       renderAll();
     });
