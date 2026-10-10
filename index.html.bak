@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#3b2563">
+  <meta name="description" content="A calm, private, offline-first personal finance app.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./src/style.css">
+  <title>PocketLedger - Budget and Planner</title>
+</head>
+<body>
+  <div class="planner-app">
+    <!-- 1. LEFT SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">P</div>
+        <div>
+          <div class="brand-title">POCKETLEDGER</div>
+          <div class="brand-sub">Budget &amp; Planner</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button type="button" class="nav-link active" data-tab="today">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          Today
+        </button>
+        <button type="button" class="nav-link" data-tab="month">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Planner
+        </button>
+        <button type="button" class="nav-link" data-tab="envelopes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Envelopes
+        </button>
+        <button type="button" class="nav-link" data-tab="goals">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          Goals
+        </button>
+        <button type="button" class="nav-link" data-tab="debt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          Debt
+        </button>
+        <button type="button" class="nav-link" data-tab="bills">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Bills
+        </button>
+        <button type="button" class="nav-link" data-tab="settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Settings
+        </button>
+      </nav>
+    </aside>
+
+    <!-- 2. MAIN WORKSPACE CANVAS -->
+    <main class="main-canvas">
+      <!-- Top Workspace Header -->
+      <header class="workspace-header">
+        <div>
+          <div class="date-eyebrow" id="top-date-display">FRIDAY, 9 OCTOBER</div>
+          <h1 class="greeting-headline" id="top-greeting-display">Good afternoon</h1>
+          <div class="greeting-sub">PocketLedger &middot; Calm Money &amp; Safe Spend</div>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="btn btn-outline" id="btn-header-log-trigger" style="font-size: 0.85rem; padding: 6px 14px;">+ Log a Spend</button>
+        </div>
+      </header>
+
+      <!-- Focus Action Strip ("RIGHT NOW · ONE THING ONLY") -->
+      <div class="focus-strip">
+        <div class="focus-strip-left">
+          <span class="focus-number-badge">1</span>
+          <div>
+            <div class="focus-micro">RIGHT NOW &middot; ONE THING ONLY</div>
+            <div class="focus-title" id="focus-strip-text">Log anything you spent today</div>
+          </div>
+        </div>
+        <div class="focus-strip-right">
+          <span class="tag-time" id="focus-period-tag" style="background: rgba(255,255,255,0.18); color: white;">30 sec</span>
+        </div>
+      </div>
+
+      <!-- SCREEN: TODAY -->
+      <div id="screen-today" class="screen active">
+        <!-- UPPER ROW: HERO (Left) & THREE SMALL THINGS (Right) -->
+        <div class="grid-two-cols">
+          <!-- HERO CARD -->
+          <section class="card hero-card">
+            <div class="hero-head">
+              <span class="card-eyebrow">SAFE TO SPEND TODAY</span>
+              <span class="badge badge-payday" id="hero-badge-status">Daily Pace</span>
+            </div>
+            <div class="hero-figure" id="hero-amount">$0.00</div>
+            <div class="hero-microcopy" id="hero-period-info">...</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+              Safe until payday: <strong id="hero-safe-total" style="color: var(--text-main);">$0.00</strong>
+            </div>
+
+            <!-- Breakdown Accordion -->
+            <details class="hero-details-toggle">
+              <summary>How is this worked out?</summary>
+              <div class="breakdown-table">
+                <div class="breakdown-row">
+                  <span>Checking account balance</span>
+                  <span id="bd-checking">+ $0.00</span>
+                </div>
+                <div class="breakdown-row">
+                  <span>Bills due before next payday</span>
+                  <span id="bd-bills-due">- $0.00</span>
+                </div>
+                <div class="breakdown-row">
+                  <span>Annual bills reserve</span>
+                  <span id="bd-annual-reserve">- $0.00</span>
+                </div>
+                <div class="breakdown-row">
+                  <span>Spending logged today</span>
+                  <span id="bd-spent">- $0.00</span>
+                </div>
+                <div class="breakdown-row">
+                  <span>Set aside money</span>
+                  <span id="bd-set-aside">- $0.00</span>
+                </div>
+                <div class="breakdown-row total">
+                  <span>Safe until payday</span>
+                  <span id="bd-safe-total">$0.00</span>
+                </div>
+              </div>
+            </details>
+          </section>
+
+          <!-- THREE SMALL THINGS (Checklist card) -->
+          <section class="card checklist-card">
+            <div class="hero-head">
+              <span class="card-eyebrow">THREE SMALL THINGS</span>
+              <span class="item-meta" id="checklist-progress-text">0 of 3 done</span>
+            </div>
+            <div class="check-item" id="row-chk-log-today" style="cursor: pointer;" title="Tap to log a spend">
+              <div class="check-item-left">
+                <input type="checkbox" id="chk-log-today" style="width: 18px; height: 18px; cursor: pointer; pointer-events: none;">
+                <label style="cursor: pointer;">Log anything you spent today</label>
+              </div>
+              <span class="tag-time">30 sec</span>
+            </div>
+            <div class="check-item" id="row-chk-balance-set" style="cursor: pointer;" title="Tap to set checking balance">
+              <div class="check-item-left">
+                <input type="checkbox" id="chk-balance-set" style="width: 18px; height: 18px; cursor: pointer; pointer-events: none;">
+                <label style="cursor: pointer;">Put in what is actually in checking</label>
+              </div>
+              <span class="tag-time">1 min</span>
+            </div>
+            <div class="check-item" id="row-chk-stay-under">
+              <div class="check-item-left">
+                <input type="checkbox" id="chk-stay-under" style="width: 18px; height: 18px; cursor: pointer; pointer-events: none;">
+                <label id="lbl-stay-under">Keep today under allowance</label>
+              </div>
+              <span class="tag-time">&mdash;</span>
+            </div>
+            <div class="card-footer-motto">
+              &ldquo;do one, feel better &ndash; that's the whole trick&rdquo;
+            </div>
+          </section>
+        </div>
+
+        <!-- LOWER ROW: LOG A SPEND (User-Controlled) & WHAT YOU LOGGED -->
+        <div class="grid-two-cols">
+          <!-- USER-CONTROLLED SPEND ENTRY WIDGET -->
+          <section class="card spend-widget-card" id="card-log-spend">
+            <div class="hero-head">
+              <span class="card-eyebrow">LOG A SPEND</span>
+              <span class="item-meta" id="quick-log-today-count">0 logged today</span>
+            </div>
+
+            <!-- Amount Input with Steppers -->
+            <div class="spend-amount-box">
+              <label class="item-meta" for="input-spend-amount" style="font-weight: 600;">Nominal / Amount</label>
+              <div class="amount-input-wrap">
+                <input type="number" step="any" min="0" id="input-spend-amount" class="amount-input" placeholder="0.00" required>
+              </div>
+              <!-- Quick Increment Stepper Pills (+1, +5, +10, ↺) -->
+              <div class="steppers-row" id="steppers-container">
+                <!-- Populated dynamically based on currency -->
+              </div>
+            </div>
+
+            <!-- Category Selection (Pills + Custom Input) -->
+            <div class="category-chips-wrap">
+              <label class="item-meta" style="font-weight: 600;">Select Category</label>
+              <div class="category-chips-grid" id="category-chips-picker">
+                <!-- Clickable category chips -->
+              </div>
+              <div class="custom-cat-row" style="margin-top: 4px;">
+                <input type="text" id="input-spend-custom-cat" class="input" placeholder="Or type a new category here..." style="padding: 8px 12px; font-size: 0.85rem;">
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-primary" id="btn-submit-spend" style="width: 100%; margin-top: 4px;">
+              Log Spend
+            </button>
+          </section>
+
+          <!-- WHAT YOU LOGGED -->
+          <section class="card">
+            <div class="hero-head">
+              <div>
+                <span class="card-eyebrow">WHAT YOU LOGGED</span>
+                <div class="item-meta">Every spend you log, newest first</div>
+              </div>
+              <span id="today-tx-count" class="badge" style="background: var(--surface-border); color: var(--text-main);">0 entries</span>
+            </div>
+
+            <div id="today-tx-list" class="tx-list">
+              <div class="empty-state-box">
+                nothing logged yet. anything you add lands here, editable.
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- SECTION: THE MONTH SO FAR -->
+        <section class="card" id="card-the-month-so-far">
+          <div class="hero-head">
+            <span class="card-eyebrow">THE MONTH SO FAR</span>
+            <span class="item-meta" id="mso-kept-top-text">$0 kept</span>
+          </div>
+
+          <div class="month-so-far-wrap">
+            <!-- Left Donut Gauge -->
+            <div class="donut-meter-box">
+              <svg width="150" height="150" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--surface-border)" stroke-width="12"/>
+                <circle id="donut-wentout-arc" cx="50" cy="50" r="40" fill="none" stroke="var(--primary)" stroke-width="12" stroke-dasharray="251.2" stroke-dashoffset="251.2" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+              </svg>
+              <div class="donut-inner-text">
+                <div class="donut-inner-label">WENT OUT</div>
+                <div class="donut-inner-val" id="donut-wentout-amount">$0</div>
+              </div>
+            </div>
+
+            <!-- Right Categories Table -->
+            <div>
+              <div class="categories-table-grid">
+                <div class="cat-table-row">
+                  <div class="cat-table-left">
+                    <span class="dot-cat" style="background: #e06d53;"></span>
+                    <span>Bills &amp; rent</span>
+                  </div>
+                  <strong id="cat-val-bills">$0</strong>
+                </div>
+                <div class="cat-table-row">
+                  <div class="cat-table-left">
+                    <span class="dot-cat" style="background: #38b2ac;"></span>
+                    <span>Living &amp; food</span>
+                  </div>
+                  <strong id="cat-val-living">$0</strong>
+                </div>
+                <div class="cat-table-row">
+                  <div class="cat-table-left">
+                    <span class="dot-cat" style="background: #9f7aea;"></span>
+                    <span>Fun &amp; friends</span>
+                  </div>
+                  <strong id="cat-val-fun">$0</strong>
+                </div>
+                <div class="cat-table-row">
+                  <div class="cat-table-left">
+                    <span class="dot-cat" style="background: #dd6b20;"></span>
+                    <span>To debt</span>
+                  </div>
+                  <strong id="cat-val-debt">$0</strong>
+                </div>
+                <div class="cat-table-row">
+                  <div class="cat-table-left">
+                    <span class="dot-cat" style="background: #48bb78;"></span>
+                    <span>To savings</span>
+                  </div>
+                  <strong id="cat-val-savings">$0</strong>
+                </div>
+                <div class="cat-table-row">
+                  <div class="cat-table-left">
+                    <span class="dot-cat" style="background: #a0aec0;"></span>
+                    <span>Left over</span>
+                  </div>
+                  <strong id="cat-val-leftover">$0</strong>
+                </div>
+              </div>
+
+              <!-- Subcategory Tags Under Fun & Living -->
+              <div style="margin-top: 14px; display: flex; flex-direction: column; gap: 8px;">
+                <div style="font-size: 0.82rem; color: var(--text-muted); font-style: italic;">
+                  Tap a word above to rename it. Tap a kind below to move it to the other side &ndash; these two are the only ones built from what you log; the rest come from your bills, debts and goals.
+                </div>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="tags-subcategories-list">
+                  <span class="badge" style="background: #fce7f3; color: #9d174d;">&bull; Coffee</span>
+                  <span class="badge" style="background: #ede9fe; color: #5b21b6;">&bull; Fun</span>
+                  <span class="badge" style="background: #ffedd5; color: #9a3412;">&bull; Food</span>
+                  <span class="badge" style="background: #dcfce7; color: #166534;">&bull; Groceries</span>
+                  <span class="badge" style="background: #e0f2fe; color: #075985;">&bull; Transit</span>
+                  <span class="badge" style="background: #f1f5f9; color: #475569;">&bull; Other</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3 Summary Blocks: Came in / Went out / Kept -->
+          <div class="summary-blocks-row">
+            <div class="summary-block came-in">
+              <div class="summary-block-label">Came in</div>
+              <div class="summary-block-val" id="summary-came-in">$0</div>
+            </div>
+            <div class="summary-block went-out">
+              <div class="summary-block-label">Went out</div>
+              <div class="summary-block-val" id="summary-went-out">$0</div>
+            </div>
+            <div class="summary-block kept">
+              <div class="summary-block-label">Kept</div>
+              <div class="summary-block-val" id="summary-kept">$0</div>
+            </div>
+          </div>
+
+          <div style="font-family: var(--text-serif); font-style: italic; font-size: 0.88rem; color: var(--text-muted); text-align: center; margin-top: 6px;" id="caption-month-so-far">
+            nothing recorded for this month yet &mdash; the shape appears as you go
+          </div>
+        </section>
+
+        <!-- SECTION: EVERY DAY THIS MONTH -->
+        <section class="card">
+          <div class="hero-head">
+            <span class="card-eyebrow">EVERY DAY THIS MONTH</span>
+          </div>
+          <div class="timeline-31-grid" id="timeline-31-container">
+            <!-- 31 daily bars -->
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">
+            <span id="label-month-start">Oct 1</span>
+            <span style="color: var(--primary);">today</span>
+            <span id="label-month-end">Oct 31</span>
+          </div>
+          <div style="font-family: var(--text-serif); font-style: italic; font-size: 0.88rem; color: var(--text-muted); text-align: center; margin-top: 4px;" id="caption-every-day">
+            nothing logged this month yet &ndash; the shape appears as you go
+          </div>
+        </section>
+
+        <!-- SECTION: RUN TO PAYDAY & MILESTONES (Side-by-Side) -->
+        <div class="grid-two-cols">
+          <!-- RUN TO PAYDAY -->
+          <section class="card">
+            <div class="hero-head">
+              <span class="card-eyebrow">RUN TO PAYDAY</span>
+              <span class="item-meta" id="runway-days-left-text">22 days left</span>
+            </div>
+            <div class="runway-track" id="runway-track-bars">
+              <!-- Pill runway bars -->
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">
+              <span id="runway-start-label">Thu 1 Oct</span>
+              <span style="color: var(--primary); font-weight: 700;">today</span>
+              <span id="runway-end-label" style="color: var(--accent); font-weight: 700;">payday</span>
+            </div>
+            <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 6px; font-size: 0.88rem;">
+              <div style="display: flex; justify-content: space-between;">
+                <span class="item-meta">Safe until payday</span>
+                <strong style="font-family: var(--text-serif); font-size: 1.05rem;" id="runway-safe-until">$0.00</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span class="item-meta">Each day from here</span>
+                <strong style="font-family: var(--text-serif); font-size: 1.05rem;" id="runway-each-day">about $0/day</strong>
+              </div>
+            </div>
+          </section>
+
+          <!-- MILESTONES -->
+          <section class="card">
+            <div class="hero-head">
+              <span class="card-eyebrow">MILESTONES</span>
+              <span class="item-meta" id="milestones-count-text">0 of 4 reached</span>
+            </div>
+            <div class="milestones-list" id="milestones-container">
+              <!-- 4 milestones -->
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- SCREEN: MONTH / PLANNER (Alongside View) -->
+      <div id="screen-month" class="screen">
+        <div class="month-stepper card" style="padding: 14px 20px; flex-direction: row;">
+          <div>
+            <span class="card-eyebrow">The Month</span>
+            <h2 class="month-title" id="cal-month-title">October 2026</h2>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <button type="button" class="btn btn-outline" id="btn-prev-month" style="padding: 6px 12px;">&larr;</button>
+            <button type="button" class="btn btn-outline" id="btn-month-today" style="padding: 6px 12px; font-size: 0.85rem;">Today</button>
+            <button type="button" class="btn btn-outline" id="btn-next-month" style="padding: 6px 12px;">&rarr;</button>
+          </div>
+        </div>
+
+        <div class="month-layout">
+          <!-- Calendar Grid (Left) -->
+          <section class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+              <span class="card-eyebrow">Every Day This Month</span>
+              <div class="cal-legend">
+                <span><i class="cal-legend-dot payday"></i>Payday</span>
+                <span><i class="cal-legend-dot bill"></i>Bill</span>
+                <span><i class="cal-legend-dot spend"></i>Spend</span>
+              </div>
+            </div>
+
+            <div class="calendar-grid">
+              <div class="cal-weekday">Mon</div>
+              <div class="cal-weekday">Tue</div>
+              <div class="cal-weekday">Wed</div>
+              <div class="cal-weekday">Thu</div>
+              <div class="cal-weekday">Fri</div>
+              <div class="cal-weekday">Sat</div>
+              <div class="cal-weekday">Sun</div>
+            </div>
+            <div id="calendar-days-container" class="calendar-grid">
+              <!-- Dynamic Day Cells -->
+            </div>
+          </section>
+
+          <!-- Agenda Inspector (Right / Alongside) -->
+          <section class="card agenda-card">
+            <div class="agenda-header">
+              <span class="item-meta">Selected Day</span>
+              <h3 class="agenda-date" id="agenda-date-title">Today</h3>
+              <div class="agenda-total" id="agenda-day-summary">No activity on this date</div>
+            </div>
+
+            <div id="agenda-events-list" class="item-list">
+              <!-- Dynamic events on selected day -->
+            </div>
+
+            <!-- Quick Spend on Selected Date Form -->
+            <div style="border-top: 1px solid var(--surface-border); padding-top: 10px; margin-top: 4px;">
+              <span class="item-meta" style="font-weight: 600;">Log spend on this day</span>
+              <form id="form-agenda-spend" class="form-row" style="margin-top: 6px;">
+                <input type="number" step="any" min="0.01" id="agenda-spend-amount" class="input" placeholder="Amount" required>
+                <input type="text" id="agenda-spend-category" class="input" placeholder="Category" list="category-options" style="max-width: 130px;" required>
+                <button type="submit" class="btn btn-primary" style="padding: 8px 12px;">+</button>
+              </form>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- SCREEN: ENVELOPES -->
+      <div id="screen-envelopes" class="screen">
+        <section class="card hero-card">
+          <span class="card-eyebrow">Left across every envelope</span>
+          <div class="hero-figure" id="env-total-left">$0.00</div>
+          <div class="hero-microcopy">
+            Spent: <b id="env-total-spent">$0.00</b> &middot; Total caps: <b id="env-total-caps">$0.00</b>
+          </div>
+          <div class="progress-track" style="height: 10px; margin-top: 8px;">
+            <div class="progress-fill" id="env-total-progress-bar" style="width: 0%;"></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="hero-head">
+            <span class="card-eyebrow">CATEGORY ENVELOPES</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.88rem;">
+            Caps are soft guidelines for this month. Going over signals attention without locking your money.
+          </p>
+
+          <div id="envelopes-container" class="grid-two">
+            <!-- Dynamic envelope cards -->
+          </div>
+        </section>
+
+        <!-- Add Envelope Form -->
+        <section class="card">
+          <span class="card-eyebrow">Add / Edit an Envelope</span>
+          <form id="form-add-envelope" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="form-group">
+              <label for="env-name">Envelope Name</label>
+              <input type="text" id="env-name" class="input" placeholder="e.g. Groceries & Cooking" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group" style="flex: 1;">
+                <label for="env-category">Category Name</label>
+                <input type="text" id="env-category" class="input" placeholder="e.g. Food, Fitness, Bills" list="category-options" required>
+                <datalist id="category-options"></datalist>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="env-cap">Budget Cap</label>
+                <input type="number" step="any" min="1" id="env-cap" class="input" placeholder="400.00" required>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="align-self: flex-start;">Save Envelope</button>
+          </form>
+        </section>
+      </div>
+
+      <!-- SCREEN: GOALS -->
+      <div id="screen-goals" class="screen">
+        <section class="card hero-card">
+          <span class="card-eyebrow">Saved toward your goals</span>
+          <div class="hero-figure" id="goal-total-saved">$0.00</div>
+          <div class="hero-microcopy">
+            Total target: <b id="goal-total-target">$0.00</b> &middot; Monthly total: <b id="goal-total-monthly">$0.00/mo</b>
+          </div>
+          <div class="progress-track" style="height: 10px; margin-top: 8px;">
+            <div class="progress-fill success" id="goal-total-progress-bar" style="width: 0%;"></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <span class="card-eyebrow">Savings Targets</span>
+          <div id="goals-container" class="grid-two">
+            <!-- Dynamic goal cards -->
+          </div>
+        </section>
+
+        <section class="card">
+          <span class="card-eyebrow">Add a Savings Goal</span>
+          <form id="form-add-goal" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="form-group">
+              <label for="goal-name">Goal Name</label>
+              <input type="text" id="goal-name" class="input" placeholder="e.g. Emergency Fund, New Laptop" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group" style="flex: 1;">
+                <label for="goal-target">Target Amount</label>
+                <input type="number" step="any" min="1" id="goal-target" class="input" placeholder="1000.00" required>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="goal-saved">Current Saved</label>
+                <input type="number" step="any" min="0" id="goal-saved" class="input" placeholder="0.00" required>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="goal-monthly">Monthly Allocation</label>
+                <input type="number" step="any" min="0" id="goal-monthly" class="input" placeholder="100.00" required>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="align-self: flex-start;">Add Goal</button>
+          </form>
+        </section>
+      </div>
+
+      <!-- SCREEN: DEBT -->
+      <div id="screen-debt" class="screen">
+        <div class="card" style="padding: 14px 20px; flex-direction: row; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <span class="card-eyebrow">Payoff Strategy</span>
+            <h3 style="font-size: 1.05rem;" id="debt-strategy-title">Snowball Method</h3>
+          </div>
+          <div class="btn-group">
+            <button type="button" class="btn-group-item active" id="btn-strategy-snowball">Snowball</button>
+            <button type="button" class="btn-group-item" id="btn-strategy-avalanche">Avalanche</button>
+          </div>
+        </div>
+
+        <section class="card hero-card">
+          <span class="card-eyebrow">Total Debt Remaining</span>
+          <div class="hero-figure" id="debt-total-balance">$0.00</div>
+          <div class="hero-microcopy">
+            Total Minimum Payments: <b id="debt-total-min">$0.00/mo</b> &middot; Est. Debt-Free: <b id="debt-payoff-horizon">...</b>
+          </div>
+        </section>
+
+        <section class="card">
+          <span class="card-eyebrow">Debts &amp; Credit Accounts</span>
+          <div id="debts-container" class="item-list">
+            <!-- Dynamic debt rows -->
+          </div>
+        </section>
+
+        <section class="card">
+          <span class="card-eyebrow">Add a Debt</span>
+          <form id="form-add-debt" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="form-group">
+              <label for="debt-name">Debt / Card Name</label>
+              <input type="text" id="debt-name" class="input" placeholder="e.g. Visa Credit Card, Student Loan" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group" style="flex: 1;">
+                <label for="debt-balance">Current Balance</label>
+                <input type="number" step="any" min="1" id="debt-balance" class="input" placeholder="1200.00" required>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="debt-apr">Annual APR (%)</label>
+                <input type="number" step="0.1" min="0" id="debt-apr" class="input" placeholder="19.9" required>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="debt-min">Min Payment / Mo</label>
+                <input type="number" step="any" min="1" id="debt-min" class="input" placeholder="50.00" required>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="align-self: flex-start;">Add Debt</button>
+          </form>
+        </section>
+      </div>
+
+      <!-- SCREEN: BILLS -->
+      <div id="screen-bills" class="screen">
+        <section class="card">
+          <div class="hero-head">
+            <span class="card-eyebrow">MONTHLY &amp; ANNUAL BILLS</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.88rem;">
+            Unpaid bills due before your next payday are automatically reserved from your safe spend.
+          </p>
+
+          <div id="bills-list" class="item-list">
+            <!-- Dynamic bills -->
+          </div>
+        </section>
+
+        <section class="card">
+          <span class="card-eyebrow">Add a Recurring Bill</span>
+          <form id="form-add-bill" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="form-group">
+              <label for="bill-name">Bill Name</label>
+              <input type="text" id="bill-name" class="input" placeholder="e.g. Rent, Electricity, Car Insurance" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group" style="flex: 1;">
+                <label for="bill-amount">Amount</label>
+                <input type="number" step="any" min="0.01" id="bill-amount" class="input" placeholder="0.00" required>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="bill-recurrence">Frequency</label>
+                <select id="bill-recurrence" class="input">
+                  <option value="monthly">Monthly</option>
+                  <option value="annual">Annual (Spread over 12 mos)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group" style="flex: 1;">
+                <label for="bill-day">Due Day (1-31)</label>
+                <input type="number" min="1" max="31" id="bill-day" class="input" placeholder="1-31" required>
+              </div>
+              <div class="form-group" style="flex: 1;" id="group-bill-month">
+                <label for="bill-month">Due Month (for Annual)</label>
+                <select id="bill-month" class="input">
+                  <option value="1">January</option>
+                  <option value="2">February</option>
+                  <option value="3">March</option>
+                  <option value="4">April</option>
+                  <option value="5">May</option>
+                  <option value="6">June</option>
+                  <option value="7">July</option>
+                  <option value="8">August</option>
+                  <option value="9">September</option>
+                  <option value="10">October</option>
+                  <option value="11">November</option>
+                  <option value="12">December</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="align-self: flex-start;">Add Bill</button>
+          </form>
+        </section>
+      </div>
+
+      <!-- SCREEN: SETTINGS -->
+      <div id="screen-settings" class="screen">
+        <section class="card">
+          <span class="card-eyebrow">Preferences &amp; Appearance</span>
+          <div class="form-row">
+            <div class="form-group" style="flex: 1;">
+              <label for="setting-currency">Currency</label>
+              <select id="setting-currency" class="input">
+                <option value="USD">USD ($)</option>
+                <option value="IDR">IDR (Rp)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+                <option value="JPY">JPY (¥)</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label for="setting-theme">Theme Mode</label>
+              <select id="setting-theme" class="input">
+                <option value="system">System Default</option>
+                <option value="light">Soft Spectrum (Light)</option>
+                <option value="dark">Midnight Spectrum (Dark)</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <span class="card-eyebrow">Checking Account Balance</span>
+          <p style="color: var(--text-muted); font-size: 0.88rem;">
+            Update your balance whenever you check your bank. Transactions and bills paid prior to this moment will not be deducted again.
+          </p>
+          <form id="form-update-balance" class="form-row">
+            <input type="number" step="any" min="0" id="input-new-balance" class="input" placeholder="Real Balance" required>
+            <button type="submit" class="btn btn-primary">Update</button>
+          </form>
+          <p id="balance-as-of-note" class="item-meta" style="margin-top: 4px;">Balance last set: ...</p>
+        </section>
+
+        <section class="card">
+          <span class="card-eyebrow">Payday &amp; Income Setup</span>
+          <form id="form-update-payday" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="form-row">
+              <div class="form-group" style="flex: 1;">
+                <label for="pay-amount">Paycheck / Main Income Amount</label>
+                <input type="number" step="any" min="0" id="pay-amount" class="input" placeholder="2500.00" required>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="pay-anchor">Reference Payday Date</label>
+                <input type="date" id="pay-anchor" class="input" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group" style="flex: 1;">
+                <label for="pay-cycle">Pay Frequency</label>
+                <select id="pay-cycle" class="input">
+                  <option value="weekly">Every Week (7 days)</option>
+                  <option value="biweekly">Every Two Weeks (14 days)</option>
+                  <option value="semimonthly">Twice a Month (1st & 15th)</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="pay-setaside">Set Aside Money</label>
+                <input type="number" step="any" min="0" id="pay-setaside" class="input" placeholder="0.00">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="align-self: flex-start;">Save Settings</button>
+          </form>
+        </section>
+
+        <section class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="card-eyebrow">Desktop Auto-Save &amp; Backup</span>
+            <span id="autosave-status-badge" class="autosave-pill inactive">Auto-Save: Off</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.88rem;">
+            Want your backup to take care of itself? Pick a file on your computer once, and every change saves into it automatically.
+          </p>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button type="button" id="btn-toggle-autosave" class="btn btn-primary">Choose Local File for Auto-Save</button>
+            <button type="button" id="btn-export-json" class="btn btn-outline">Export Backup (JSON)</button>
+            <button type="button" id="btn-export-csv" class="btn btn-outline">Export History (CSV)</button>
+            <label class="btn btn-outline" style="cursor: pointer;">
+              Restore Backup
+              <input type="file" id="input-import-json" accept=".json" style="display: none;">
+            </label>
+            <button type="button" id="btn-trigger-reset" class="btn btn-danger" style="margin-left: auto;">Reset Data / Start Fresh</button>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- 3. RIGHT MONTH DIVIDER TABS RAIL -->
+    <aside class="month-rail">
+      <button type="button" class="month-tab tab-jan" data-month="0">JAN</button>
+      <button type="button" class="month-tab tab-feb" data-month="1">FEB</button>
+      <button type="button" class="month-tab tab-mar" data-month="2">MAR</button>
+      <button type="button" class="month-tab tab-apr" data-month="3">APR</button>
+      <button type="button" class="month-tab tab-may" data-month="4">MAY</button>
+      <button type="button" class="month-tab tab-jun" data-month="5">JUN</button>
+      <button type="button" class="month-tab tab-jul" data-month="6">JUL</button>
+      <button type="button" class="month-tab tab-aug" data-month="7">AUG</button>
+      <button type="button" class="month-tab tab-sep" data-month="8">SEP</button>
+      <button type="button" class="month-tab tab-oct" data-month="9">OCT</button>
+      <button type="button" class="month-tab tab-nov" data-month="10">NOV</button>
+      <button type="button" class="month-tab tab-dec" data-month="11">DEC</button>
+    </aside>
+  </div>
+
+  <!-- MODAL: LOG A SPEND POPUP -->
+  <dialog id="modal-log-spend" class="planner-modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Log a Spend</h3>
+      <button type="button" class="modal-close-btn" data-close-modal="modal-log-spend">&times;</button>
+    </div>
+    <form id="form-modal-log-spend" style="display: flex; flex-direction: column; gap: 14px;">
+      <div class="form-group">
+        <label for="modal-input-amount" style="font-weight: 600;">Amount</label>
+        <input type="number" step="any" min="0.01" id="modal-input-amount" class="amount-input" placeholder="0.00" required>
+      </div>
+      <div class="form-group">
+        <label for="modal-input-category" style="font-weight: 600;">Category</label>
+        <input type="text" id="modal-input-category" class="input" placeholder="e.g. Coffee, Food, Transit" list="category-options" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="margin-top: 6px;">Save &amp; Log</button>
+    </form>
+  </dialog>
+
+  <!-- MODAL: UPDATE CHECKING BALANCE POPUP -->
+  <dialog id="modal-update-balance" class="planner-modal">
+    <div class="modal-header">
+      <h3 class="modal-title">What's in Checking?</h3>
+      <button type="button" class="modal-close-btn" data-close-modal="modal-update-balance">&times;</button>
+    </div>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+      Look it up in your bank app &ndash; Today starts from whatever is actually in checking right now.
+    </p>
+    <form id="form-modal-update-balance" style="display: flex; flex-direction: column; gap: 14px;">
+      <div class="form-group">
+        <label for="modal-input-balance" style="font-weight: 600;">Real Checking Balance</label>
+        <input type="number" step="any" min="0" id="modal-input-balance" class="amount-input" placeholder="0.00" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="margin-top: 6px;">Set Balance</button>
+    </form>
+  </dialog>
+
+  <!-- MODAL: RESET DATA CONFIRM -->
+  <dialog id="modal-reset-confirm" class="planner-modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Reset &amp; Start Fresh</h3>
+      <button type="button" class="modal-close-btn" data-close-modal="modal-reset-confirm">&times;</button>
+    </div>
+    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
+      Do you want to start with a completely empty ledger (all numbers set to $0) or reset back to the default example numbers?
+    </p>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <button type="button" class="btn btn-danger" id="btn-confirm-empty-reset">Start Fresh (All $0)</button>
+      <button type="button" class="btn btn-outline" id="btn-confirm-demo-reset">Reset to Example Numbers</button>
+      <button type="button" class="btn btn-ghost" data-close-modal="modal-reset-confirm">Cancel</button>
+    </div>
+  </dialog>
+
+  <script type="module" src="./src/main.ts"></script>
+</body>
+</html>

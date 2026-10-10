@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#3b2563">
+  <meta name="description" content="A calm, private, offline-first personal finance app.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./src/style.css">
+  <title>Budget and Planner</title>
+</head>
+<body>
+  <div class="planner-app">
+    <!-- 1. LEFT SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-badge">B</div>
+        <div>
+          <div class="brand-title">BUDGET AND PLANNER</div>
+          <div class="brand-sub" id="sidebar-planner-title">My Everyday Money Plan</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button type="button" class="nav-link active" data-tab="today">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          Today
+        </button>
+        <button type="button" class="nav-link" data-tab="month">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Planner
+        </button>
+        <button type="button" class="nav-link" data-tab="envelopes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Envelopes
+        </button>
+        <button type="button" class="nav-link" data-tab="goals">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          Goals
+        </button>
+        <button type="button" class="nav-link" data-tab="debt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+          Debt
+        </button>
+        <button type="button" class="nav-link" data-tab="bills">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Bills
+        </button>
+        <button type="button" class="nav-link" data-tab="income">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          Money in
+        </button>
+        <button type="button" class="nav-link" data-tab="milestones">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Milestones
+        </button>
+        <button type="button" class="nav-link" data-tab="settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Settings
+        </button>
+        <button type="button" class="nav-link" id="btn-sidebar-how-it-works" style="margin-top: 4px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          How it Works
+        </button>
+      </nav>
+
+      <!-- Sidebar "Saving up for" Section (ADHD Goals summary) -->
+      <section class="sidebar-goals-panel" id="sidebar-goals-panel" aria-label="Saving up for goals">
+        <div class="sidebar-goals-head">
+          <span class="sidebar-goals-label">SAVING UP FOR</span>
+          <span class="sidebar-goals-badge" id="sidebar-goals-badge">2 goals</span>
+        </div>
+        <div class="sidebar-goals-list" id="sidebar-goals-list">
+          <!-- Populated by renderSidebarGoals() -->
+        </div>
+        <button type="button" class="sidebar-goals-every-btn" id="btn-sidebar-every-goal">
+          Every goal &rarr;
+        </button>
+      </section>
+
+      <!-- Sidebar Log A Spend Widget (adhdbudget style) -->
+      <section class="sidebar-log-panel" id="sidebar-log-panel" aria-label="Log a spend">
+        <div class="sidebar-log-head">
+          <div class="sidebar-log-title-wrap">
+            <h3 class="sidebar-log-title">Log a spend</h3>
+            <span class="panel-help-badge" title="Quick spend logging">?</span>
+          </div>
+          <span class="sidebar-log-meta" id="sidebar-logged-today-count">0 logged today</span>
+        </div>
+
+        <div class="sidebar-log-well" id="sidebar-log-well-trigger" title="Click to open popup modal">
+          <output class="sidebar-well-figure" id="sidebar-log-amount-display">$0.00</output>
+          <p class="sidebar-well-note">tap to log a spend</p>
+        </div>
+
+        <button type="button" class="sidebar-log-launch-btn" id="btn-sidebar-log-launch" title="Click to log a spend">
+          + Log a spend
+        </button>
+      </section>
+
+      <!-- Sidebar User Badge & License Footer (Little Machines style) -->
+      <div class="sidebar-user" id="sidebar-user-footer">
+        <span class="user-mark" id="sidebar-user-avatar">B</span>
+        <span class="user-copy">
+          <span class="user-plan" id="sidebar-user-title">My Everyday Money Plan</span>
+          <span class="card-meta">lifetime licence &middot; offline copy</span>
+        </span>
+      </div>
+    </aside>
+
+    <!-- Mobile Floating Action Button (FAB) -->
+    <button type="button" class="mobile-fab" id="btn-mobile-fab-log" title="Log a spend">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <span>Log a spend</span>
+    </button>
+
+    <!-- Global Toast Container (1-Click Undo) -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <!-- 2. MAIN WORKSPACE CANVAS -->
+    <main class="main-canvas">
+      <!-- Top Workspace Header -->
+      <header class="workspace-header">
+        <div>
+          <div class="date-eyebrow" id="top-date-display">FRIDAY, 9 OCTOBER</div>
+          <h1 class="greeting-headline" id="top-greeting-display">Good afternoon</h1>
+          <div class="greeting-sub" id="top-planner-title">Budget and Planner &middot; Calm Money &amp; Safe Spend</div>
+        </div>
+        <div class="top-nav-actions" style="display: flex; gap: 8px; align-items: center;">
+          <button type="button" class="btn btn-ghost" id="btn-header-quick-actions" style="font-size: 0.82rem; padding: 6px 12px; border: 1px solid var(--surface-border); display: inline-flex; align-items: center; gap: 6px;" title="Quick actions &amp; Go to screen (Ctrl+K)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span>Quick actions</span>
+            <kbd class="shortcut-kbd">Ctrl K</kbd>
+          </button>
+          <div class="view-mode-toggle" id="view-mode-toggle" role="group" aria-label="View mode">
+            <button type="button" class="view-toggle-btn active" id="btn-view-mode-simple" data-mode="simple" title="Simple view (ADHD essentials)">Simple</button>
+            <button type="button" class="view-toggle-btn" id="btn-view-mode-advanced" data-mode="everything" title="Advanced view (All tools &amp; details)">Advanced</button>
+          </div>
+          <button type="button" class="btn btn-outline" id="btn-header-log-trigger" style="font-size: 0.85rem; padding: 6px 14px;">+ Log a Spend</button>
+        </div>
+      </header>
+
+      <!-- Focus Action Strip ("RIGHT NOW · ONE THING ONLY") -->
+      <div class="focus-strip">
+        <div class="focus-strip-left">
+          <span class="focus-number-badge">1</span>
+          <div>
+            <div class="focus-micro">RIGHT NOW &middot; ONE THING ONLY</div>
+            <div class="focus-title" id="focus-strip-text">Log anything you spent today</div>
+          </div>
+        </div>
+        <div class="focus-strip-right">
+          <span class="tag-time" id="focus-period-tag" style="background: rgba(255,255,255,0.18); color: white;">30 sec</span>
+        </div>
+      </div>
+
+      <!-- SCREEN: TODAY -->
+      <div id="screen-today" class="screen active">
+        <!-- UPPER ROW: HERO (Left) & THREE SMALL THINGS (Right) -->
+        <div class="grid-two-cols">
+          <!-- HERO CARD -->
+          <section class="card hero-card">
+            <div class="hero-head">
+              <span class="card-eyebrow">SAFE TO SPEND TODAY</span>
+              <span class="badge badge-payday" id="hero-badge-status">Daily Pace</span>
+            </div>
+            <div class="hero-figure" id="hero-amount">$0.00</div>
+            <div class="hero-microcopy" id="hero-period-info">...</div>
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+              Safe until payday: <strong id="hero-safe-total" style="color: var(--text-main);">$0.00</strong>
+            </div>
+
+            <!-- Breakdown Accordion -->
+            <details class="hero-details-toggle">
+              <summary>How is this worked out?</summary>
+              <div class="breakdown-table">
+                <div class="breakdown-row">
+                  <span>Checking account balance</span>
+                  <span id="bd-checking">+ $0.00</span>
+                </div>
+                <div class="breakdown-row">
+                  <span>Bills due before next payday</span>
+                  <span id="bd-bills-due">- $0.00</span>
+                </div>
+                <div class="breakdown-row">
+                  <span>Annual bills reserve</span>
+                  <span id="bd-annual-reserve">- $0.00</span>
+                </div>
+                <div class="breakdown-row">
+                  <span>Spending logged today</span>
+                  <span id="bd-spent">- $0.00</span>
+                </div>
+                <div class="breakdown-row">
+                  <span>Set aside money</span>
+                  <span id="bd-set-aside">- $0.00</span>
+                </div>
+                <div class="breakdown-row total">
+                  <span>Safe until payday</span>
+                  <span id="bd-safe-total">$0.00</span>
+                </div>
+                <div style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--surface-border); display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem;">
+                  <span style="color: var(--text-muted);">How is this calculated?</span>
+                  <button type="button" class="btn btn-ghost" id="btn-link-how-from-breakdown" style="font-size: 0.78rem; padding: 2px 8px; color: var(--primary);">Read How It Works &rarr;</button>
+                </div>
+              </div>
+            </details>
+          </section>
+
+          <!-- THREE SMALL THINGS (Checklist card) -->
+          <section class="card checklist-card">
+            <div class="hero-head">
+              <span class="card-eyebrow">THREE SMALL THINGS</span>
+              <span class="item-meta" id="checklist-progress-text">0 of 3 done</span>
+            </div>
+            <div class="check-item" id="row-chk-log-today" style="cursor: pointer;" title="Tap to log a spend">
+              <div class="check-item-left">
+                <input type="checkbox" id="chk-log-today" style="width: 18px; height: 18px; cursor: pointer; pointer-events: none;">
+                <label style="cursor: pointer;">Log anything you spent today</label>
+              </div>
+              <span class="tag-time">30 sec</span>
+            </div>
+            <div class="check-item" id="row-chk-balance-set" style="cursor: pointer;" title="Tap to set checking balance">
+              <div class="check-item-left">
+                <input type="checkbox" id="chk-balance-set" style="width: 18px; height: 18px; cursor: pointer; pointer-events: none;">
+                <label style="cursor: pointer;">Put in what is actually in checking</label>
+              </div>
+              <span class="tag-time">1 min</span>
+            </div>
+            <div class="check-item" id="row-chk-stay-under">
+              <div class="check-item-left">
+                <input type="checkbox" id="chk-stay-under" style="width: 18px; height: 18px; cursor: pointer; pointer-events: none;">
+                <label id="lbl-stay-under">Keep today under allowance</label>
+              </div>
+              <span class="tag-time">&mdash;</span>
+            </div>
+            <div class="card-footer-motto">
+              &ldquo;do one, feel better &ndash; that's the whole trick&rdquo;
+            </div>
+          </section>
+        </div>
+
+        <!-- LOWER ROW: WHAT YOU LOGGED & BRAIN DUMP -->
+        <div class="grid-two-cols">
+          <!-- WHAT YOU LOGGED -->
+          <section class="card" id="card-what-you-logged">
+            <div class="hero-head">
+              <div>
+                <span class="card-eyebrow">WHAT YOU LOGGED</span>
+                <div class="item-meta">Every spend you log, newest first</div>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <span id="today-tx-count" class="badge" style="background: var(--surface-border); color: var(--text-main);">0 entries</span>
+                <button type="button" class="btn btn-primary" id="btn-open-log-from-list" style="padding: 4px 10px; font-size: 0.78rem; border-radius: 9999px;">+ Log a spend</button>
+              </div>
+            </div>
+
+            <div id="today-tx-list" class="tx-list">
+              <div class="empty-state-box">
+                nothing logged yet. anything you add lands here, editable.
+              </div>
+            </div>
+          </section>
+
+          <!-- BRAIN DUMP -->
+          <section class="card brain-dump-card" id="card-brain-dump">
+            <div class="hero-head">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span class="card-eyebrow">BRAIN DUMP</span>
+                <span class="panel-help-badge" title="Thoughts, reminders, not money">?</span>
+              </div>
+              <span class="badge" id="brain-dump-count" style="background: var(--surface-border); color: var(--text-main);">0 items</span>
+            </div>
+
+            <form id="form-brain-dump" style="margin-top: 8px; margin-bottom: 12px;">
+              <input type="text" id="input-brain-dump" class="input" placeholder="Type it, press Enter" autocomplete="off" style="border-radius: 9999px; padding: 10px 16px;">
+            </form>
+
+            <div id="brain-dump-list" class="brain-dump-items-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto;">
+              <!-- Brain dump notes rendered here -->
+            </div>
+
+            <p style="margin-top: 10px; font-size: 0.8rem; color: var(--text-muted); font-style: italic;">Not money. Just yours.</p>
+          </section>
+        </div>
+
+        <!-- SECTION: THE MONTH SO FAR -->
+        <section class="card" id="card-the-month-so-far">
+          <div class="hero-head">
+            <span class="card-eyebrow">THE MONTH SO FAR</span>
+            <span class="item-meta" id="mso-kept-top-text">$0 kept</span>
+          </div>
+
+          <div class="month-so-far-wrap">
+            <!-- Left Donut Gauge -->
+            <div class="donut-meter-box">
+              <svg width="240" height="240" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--surface-border)" stroke-width="10"/>
+                <circle id="donut-wentout-arc" cx="50" cy="50" r="40" fill="none" stroke="var(--primary)" stroke-width="10" stroke-dasharray="251.2" stroke-dashoffset="251.2" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+              </svg>
+              <div class="donut-inner-text">
+                <div class="donut-inner-label">WENT OUT</div>
+                <div class="donut-inner-val" id="donut-wentout-amount">$0</div>
+              </div>
+            </div>
+
+            <!-- Right Categories Table -->
+            <div>
+              <div class="categories-table-grid">
+                <div class="cat-table-row">
+                  <div class="cat-table-left">
+                    <span class="dot-cat" style="background: #e06d53;"></span>
+                    <span id="cat-label-bills" class="renameable-word" data-cat-key="bills" title="Tap to rename label">Bills &amp; rent</span>
+                  </div>
+                  <strong id="cat-val-bills">$0</strong>
+                </div>
+                <div class="cat-table-row">
+                  <div class="cat-table-left">
+                    <span class="dot-cat" style="background: #38b2ac;"></span>
+                    <span id="cat-label-living" class="renameable-word" data-cat-key="living" title="Tap to rename label">Living &amp; food</span>
+                  </div>
+                  <strong id="cat-val-living">$0</strong>
+                </div>
+                <div class="cat-table-row">
+                  <div class="cat-table-left">
+                    <span class="dot-cat" style="background: #9f7aea;"></span>
+                    <span id="cat-label-fun" class="renameable-word" data-cat-key="fun" title="Tap to rename label">Fun &amp; friends</span>
+                  </div>
+                  <strong id="cat-val-fun">$0</strong>
+                </div>
+                <div class="cat-table-row">
+                  <div class="cat-table-left">
+                    <span class="dot-cat" style="background: #dd6b20;"></span>
+                    <span id="cat-label-debt" class="renameable-word" data-cat-key="debt" title="Tap to rename label">To debt</span>
+                  </div>
+                  <strong id="cat-val-debt">$0</strong>
+                </div>
+                <div class="cat-table-row">
+                  <div class="cat-table-left">
+                    <span class="dot-cat" style="background: #48bb78;"></span>
+                    <span id="cat-label-savings" class="renameable-word" data-cat-key="savings" title="Tap to rename label">To savings</span>
+                  </div>
+                  <strong id="cat-val-savings">$0</strong>
+                </div>
+                <div class="cat-table-row">
+                  <div class="cat-table-left">
+                    <span class="dot-cat" style="background: #a0aec0;"></span>
+                    <span id="cat-label-leftover" class="renameable-word" data-cat-key="leftover" title="Tap to rename label">Left over</span>
+                  </div>
+                  <strong id="cat-val-leftover">$0</strong>
+                </div>
+              </div>
+
+              <!-- Subcategory Tags Under Fun & Living (Grouped Atas - Bawah) -->
+              <div class="kind-classifier-section">
+                <div class="kind-classifier-hint">
+                  Tap a word above to rename it. Tap any category below to switch it &ndash; these two are the only categories built from what you log; the rest come from your bills, debts, and goals.
+                </div>
+
+                <!-- Group 1 (Top / Atas): Living & food -->
+                <div class="kind-group-card kind-group-living">
+                  <div class="kind-group-header">
+                    <div class="kind-group-title">
+                      <span class="dot-cat" style="background: #38b2ac;"></span>
+                      <span id="kind-group-name-living" class="kind-group-title-text">Living &amp; food</span>
+                      <span class="kind-group-count" id="kind-group-count-living">(0)</span>
+                    </div>
+                    <span class="kind-group-action-hint">Tap item to move to Fun &darr;</span>
+                  </div>
+                  <div class="kind-chips-container" id="tags-subcategories-living">
+                    <!-- dynamically populated by JS -->
+                  </div>
+                </div>
+
+                <!-- Group 2 (Bottom / Bawah): Fun & friends -->
+                <div class="kind-group-card kind-group-fun">
+                  <div class="kind-group-header">
+                    <div class="kind-group-title">
+                      <span class="dot-cat" style="background: #9f7aea;"></span>
+                      <span id="kind-group-name-fun" class="kind-group-title-text">Fun &amp; friends</span>
+                      <span class="kind-group-count" id="kind-group-count-fun">(0)</span>
+                    </div>
+                    <span class="kind-group-action-hint">Tap item to move to Living &uarr;</span>
+                  </div>
+                  <div class="kind-chips-container" id="tags-subcategories-fun">
+                    <!-- dynamically populated by JS -->
+                  </div>
+                </div>
+
+                <div id="tags-subcategories-list" style="display: none;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3 Summary Blocks: Came in / Went out / Kept -->
+          <div class="summary-blocks-row">
+            <div class="summary-block came-in">
+              <div class="summary-block-label">Came in</div>
+              <div class="summary-block-val" id="summary-came-in">$0</div>
+            </div>
+            <div class="summary-block went-out">
+              <div class="summary-block-label">Went out</div>
+              <div class="summary-block-val" id="summary-went-out">$0</div>
+            </div>
+            <div class="summary-block kept">
+              <div class="summary-block-label">Kept</div>
+              <div class="summary-block-val" id="summary-kept">$0</div>
+            </div>
+          </div>
+
+          <div style="font-family: var(--text-serif); font-style: italic; font-size: 0.88rem; color: var(--text-muted); text-align: center; margin-top: 6px;" id="caption-month-so-far">
+            nothing recorded for this month yet &mdash; the shape appears as you go
+          </div>
+        </section>
+
+        <!-- SECTION: EVERY DAY THIS MONTH -->
+        <section class="card">
+          <div class="hero-head">
+            <span class="card-eyebrow">EVERY DAY THIS MONTH</span>
+          </div>
+          <div class="timeline-31-grid" id="timeline-31-container">
+            <!-- 31 daily bars -->
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">
+            <span id="label-month-start">Oct 1</span>
+            <span style="color: var(--primary);">today</span>
+            <span id="label-month-end">Oct 31</span>
+          </div>
+          <div style="font-family: var(--text-serif); font-style: italic; font-size: 0.88rem; color: var(--text-muted); text-align: center; margin-top: 4px;" id="caption-every-day">
+            nothing logged this month yet &ndash; the shape appears as you go
+          </div>
+        </section>
+
+        <!-- SECTION: RUN TO PAYDAY & MILESTONES (Side-by-Side) -->
+        <div class="grid-two-cols">
+          <!-- RUN TO PAYDAY -->
+          <section class="card">
+            <div class="hero-head">
+              <span class="card-eyebrow">RUN TO PAYDAY</span>
+              <span class="item-meta" id="runway-days-left-text">22 days left</span>
+            </div>
+            <div class="runway-track" id="runway-track-bars">
+              <!-- Pill runway bars -->
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">
+              <span id="runway-start-label">Thu 1 Oct</span>
+              <span style="color: var(--primary); font-weight: 700;">today</span>
+              <span id="runway-end-label" style="color: var(--accent); font-weight: 700;">payday</span>
+            </div>
+            <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 6px; font-size: 0.88rem;">
+              <div style="display: flex; justify-content: space-between;">
+                <span class="item-meta">Safe until payday</span>
+                <strong style="font-family: var(--text-serif); font-size: 1.05rem;" id="runway-safe-until">$0.00</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between;">
+                <span class="item-meta">Each day from here</span>
+                <strong style="font-family: var(--text-serif); font-size: 1.05rem;" id="runway-each-day">about $0/day</strong>
+              </div>
+            </div>
+          </section>
+
+          <!-- MILESTONES -->
+          <section class="card">
+            <div class="hero-head">
+              <span class="card-eyebrow">MILESTONES</span>
+              <span class="item-meta" id="milestones-count-text">0 of 4 reached</span>
+            </div>
+            <div class="milestones-list" id="milestones-container">
+              <!-- 4 milestones -->
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- SCREEN: MONTH / PLANNER (Alongside View) -->
+      <div id="screen-month" class="screen">
+        <div class="month-stepper card" style="padding: 14px 20px; flex-direction: row;">
+          <div>
+            <span class="card-eyebrow">The Month</span>
+            <h2 class="month-title" id="cal-month-title">October 2026</h2>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <button type="button" class="btn btn-outline" id="btn-prev-month" style="padding: 6px 12px;">&larr;</button>
+            <button type="button" class="btn btn-outline" id="btn-month-today" style="padding: 6px 12px; font-size: 0.85rem;">Today</button>
+            <button type="button" class="btn btn-outline" id="btn-next-month" style="padding: 6px 12px;">&rarr;</button>
+          </div>
+        </div>
+
+        <!-- SECTION: NOTES FOR THE MONTH -->
+        <section class="card month-notes-card" id="card-month-notes" style="margin-bottom: 20px;">
+          <div class="hero-head" style="margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="card-eyebrow" id="month-notes-eyebrow">NOTES FOR OCTOBER</span>
+              <span class="badge" title="Notes stay with the month &ndash; they never change your numbers" style="cursor: help; font-size: 0.72rem; padding: 2px 7px;">?</span>
+            </div>
+            <span class="item-meta" id="month-notes-count-meta">0 kept</span>
+          </div>
+
+          <div class="month-notes-layout">
+            <!-- Left: Add Note Box -->
+            <div class="month-notes-input-box">
+              <textarea id="input-month-note-text" class="input month-note-textarea" placeholder="anything worth remembering about this month &ndash; a bill that felt wrong, a plan, a reason you spent&hellip;" rows="3"></textarea>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; flex-wrap: wrap; gap: 8px;">
+                <button type="button" class="btn btn-primary" id="btn-save-month-note" style="padding: 6px 16px; font-size: 0.84rem;">Keep this note</button>
+                <span class="month-notes-subtext">notes stay with the month &ndash; they never change the numbers</span>
+              </div>
+            </div>
+
+            <!-- Right: Kept Notes Box -->
+            <div class="month-notes-kept-box">
+              <div class="item-meta" style="font-weight: 600; text-transform: uppercase; font-size: 0.76rem; letter-spacing: 0.05em; margin-bottom: 8px; color: var(--text-muted);">Kept Notes</div>
+              <div id="month-kept-notes-list" class="month-kept-notes-list">
+                <!-- Dynamically rendered notes -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION: MONTH AT A GLANCE & WHAT'S HAPPENING -->
+        <div class="month-glance-layout" style="margin-bottom: 20px;">
+          <!-- Left: At A Glance Summary & Categories -->
+          <section class="card month-glance-card" id="card-month-glance">
+            <div class="hero-head" style="margin-bottom: 14px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="card-eyebrow" id="month-glance-eyebrow">OCTOBER AT A GLANCE</span>
+                <span class="badge" id="month-glance-badge-status" style="font-size: 0.74rem;">Overview</span>
+              </div>
+              <span class="badge" id="month-glance-kept-pill" style="font-weight: 600;">$0 kept</span>
+            </div>
+
+            <!-- 4 Metric Cards Grid -->
+            <div class="glance-cards-grid">
+              <div class="glance-card came-in">
+                <div class="glance-card-top">
+                  <span class="glance-card-label">Came in</span>
+                  <span class="dot-cat" style="background: #2e7d32;"></span>
+                </div>
+                <div class="glance-card-val" id="glance-came-in-val">$0</div>
+                <div class="glance-card-sub" id="glance-came-in-sub">no payday this month</div>
+              </div>
+
+              <div class="glance-card went-out">
+                <div class="glance-card-top">
+                  <span class="glance-card-label">Went out</span>
+                  <span class="dot-cat" style="background: #e06d53;"></span>
+                </div>
+                <div class="glance-card-val" id="glance-went-out-val">$0</div>
+                <div class="glance-card-sub" id="glance-went-out-sub">everything due has landed</div>
+              </div>
+
+              <div class="glance-card kept">
+                <div class="glance-card-top">
+                  <span class="glance-card-label">Kept</span>
+                  <span class="dot-cat" style="background: #9f7aea;"></span>
+                </div>
+                <div class="glance-card-val" id="glance-kept-val">$0</div>
+                <div class="glance-card-sub" id="glance-kept-sub">monthly net cashflow</div>
+              </div>
+
+              <div class="glance-card still-yours">
+                <div class="glance-card-top">
+                  <span class="glance-card-label">Still yours</span>
+                  <span class="dot-cat" style="background: #3182ce;"></span>
+                </div>
+                <div class="glance-card-val" id="glance-still-yours-val">$0</div>
+                <div class="glance-card-sub" id="glance-still-yours-sub">days to payday</div>
+              </div>
+            </div>
+
+            <!-- Category Breakdown Strip -->
+            <div class="glance-categories-strip">
+              <div class="glance-cat-item">
+                <span class="dot-cat" style="background: #e06d53;"></span>
+                <span class="glance-cat-name" id="glance-lbl-bills">Bills &amp; rent</span>
+                <strong class="glance-cat-val" id="glance-val-bills">$0</strong>
+              </div>
+              <div class="glance-cat-item">
+                <span class="dot-cat" style="background: #38b2ac;"></span>
+                <span class="glance-cat-name" id="glance-lbl-living">Living &amp; food</span>
+                <strong class="glance-cat-val" id="glance-val-living">$0</strong>
+              </div>
+              <div class="glance-cat-item">
+                <span class="dot-cat" style="background: #9f7aea;"></span>
+                <span class="glance-cat-name" id="glance-lbl-fun">Fun &amp; friends</span>
+                <strong class="glance-cat-val" id="glance-val-fun">$0</strong>
+              </div>
+              <div class="glance-cat-item">
+                <span class="dot-cat" style="background: #dd6b20;"></span>
+                <span class="glance-cat-name" id="glance-lbl-debt">To debt</span>
+                <strong class="glance-cat-val" id="glance-val-debt">$0</strong>
+              </div>
+              <div class="glance-cat-item">
+                <span class="dot-cat" style="background: #48bb78;"></span>
+                <span class="glance-cat-name" id="glance-lbl-savings">To savings</span>
+                <strong class="glance-cat-val" id="glance-val-savings">$0</strong>
+              </div>
+              <div class="glance-cat-item">
+                <span class="dot-cat" style="background: #a0aec0;"></span>
+                <span class="glance-cat-name" id="glance-lbl-leftover">Left over</span>
+                <strong class="glance-cat-val" id="glance-val-leftover">$0</strong>
+              </div>
+            </div>
+
+            <div class="glance-guidance-note" id="glance-guidance-note">
+              the part you can actually adjust is the living &amp; fun spending &mdash; calm, mindful tracking
+            </div>
+          </section>
+
+          <!-- Right: What's Happening Timeline / Activity -->
+          <section class="card month-activity-card" id="card-month-activity">
+            <div class="hero-head" style="margin-bottom: 12px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="card-eyebrow">WHAT'S HAPPENING</span>
+                <span class="badge" title="Monthly activity overview" style="cursor: help; font-size: 0.72rem; padding: 2px 7px;">?</span>
+              </div>
+              <span class="badge" id="month-activity-count-badge">0 things</span>
+            </div>
+
+            <div id="month-activity-items-list" class="month-activity-list">
+              <!-- Dynamically populated activity rows -->
+            </div>
+
+            <div class="month-activity-footer" id="month-activity-footer-msg">
+              nothing here was a surprise
+            </div>
+          </section>
+        </div>
+
+        <div class="month-layout">
+          <!-- Calendar Grid (Left) -->
+          <section class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+              <span class="card-eyebrow">Every Day This Month</span>
+              <div class="cal-legend">
+                <span><i class="cal-legend-dot payday"></i>Payday</span>
+                <span><i class="cal-legend-dot bill"></i>Bill</span>
+                <span><i class="cal-legend-dot spend"></i>Spend</span>
+              </div>
+            </div>
+
+            <div class="calendar-grid">
+              <div class="cal-weekday">Mon</div>
+              <div class="cal-weekday">Tue</div>
+              <div class="cal-weekday">Wed</div>
+              <div class="cal-weekday">Thu</div>
+              <div class="cal-weekday">Fri</div>
+              <div class="cal-weekday">Sat</div>
+              <div class="cal-weekday">Sun</div>
+            </div>
+            <div id="calendar-days-container" class="calendar-grid">
+              <!-- Dynamic Day Cells -->
+            </div>
+          </section>
+
+          <!-- Agenda Inspector (Right / Alongside) -->
+          <section class="card agenda-card">
+            <div class="agenda-header">
+              <span class="item-meta">Selected Day</span>
+              <h3 class="agenda-date" id="agenda-date-title">Today</h3>
+              <div class="agenda-total" id="agenda-day-summary">No activity on this date</div>
+            </div>
+
+            <div id="agenda-events-list" class="item-list">
+              <!-- Dynamic events on selected day -->
+            </div>
+
+            <!-- Quick Spend on Selected Date Form -->
+            <div style="border-top: 1px solid var(--surface-border); padding-top: 10px; margin-top: 4px;">
+              <span class="item-meta" style="font-weight: 600;">Log spend on this day</span>
+              <form id="form-agenda-spend" class="form-row" style="margin-top: 6px;">
+                <input type="number" step="any" min="0.01" id="agenda-spend-amount" class="input" placeholder="Amount" required>
+                <input type="text" id="agenda-spend-category" class="input" placeholder="Category" list="category-options" style="max-width: 130px;" required>
+                <button type="submit" class="btn btn-primary" style="padding: 8px 12px;">+</button>
+              </form>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- SCREEN: ENVELOPES -->
+      <div id="screen-envelopes" class="screen">
+        <section class="card hero-card">
+          <span class="card-eyebrow">Left across every envelope</span>
+          <div class="hero-figure" id="env-total-left">$0.00</div>
+          <div class="hero-microcopy">
+            Spent: <b id="env-total-spent">$0.00</b> &middot; Total caps: <b id="env-total-caps">$0.00</b>
+          </div>
+          <div class="progress-track" style="height: 10px; margin-top: 8px;">
+            <div class="progress-fill" id="env-total-progress-bar" style="width: 0%;"></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="hero-head">
+            <span class="card-eyebrow">CATEGORY ENVELOPES</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.88rem;">
+            Caps are soft guidelines for this month. Going over signals attention without locking your money.
+          </p>
+
+          <div id="envelopes-container" class="grid-two">
+            <!-- Dynamic envelope cards -->
+          </div>
+        </section>
+
+        <!-- Add Envelope Form -->
+        <section class="card">
+          <span class="card-eyebrow">Add / Edit an Envelope</span>
+          <form id="form-add-envelope" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="form-group">
+              <label for="env-name">Envelope Name</label>
+              <input type="text" id="env-name" class="input" placeholder="e.g. Groceries & Cooking" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group" style="flex: 1;">
+                <label for="env-category">Category Name</label>
+                <input type="text" id="env-category" class="input" placeholder="e.g. Food, Fitness, Bills" list="category-options" required>
+                <datalist id="category-options"></datalist>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="env-cap">Budget Cap</label>
+                <input type="number" step="any" min="1" id="env-cap" class="input" placeholder="400.00" required>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="align-self: flex-start;">Save Envelope</button>
+          </form>
+        </section>
+      </div>
+
+      <!-- SCREEN: GOALS -->
+      <div id="screen-goals" class="screen">
+        <section class="card hero-card">
+          <span class="card-eyebrow">Saved toward your goals</span>
+          <div class="hero-figure" id="goal-total-saved">$0.00</div>
+          <div class="hero-microcopy">
+            Total target: <b id="goal-total-target">$0.00</b> &middot; Monthly total: <b id="goal-total-monthly">$0.00/mo</b>
+          </div>
+          <div class="progress-track" style="height: 10px; margin-top: 8px;">
+            <div class="progress-fill success" id="goal-total-progress-bar" style="width: 0%;"></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <span class="card-eyebrow">Savings Targets</span>
+          <div id="goals-container" class="grid-two">
+            <!-- Dynamic goal cards -->
+          </div>
+        </section>
+
+        <section class="card">
+          <span class="card-eyebrow">Add a Savings Goal</span>
+          <form id="form-add-goal" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="form-group">
+              <label for="goal-name">Goal Name</label>
+              <input type="text" id="goal-name" class="input" placeholder="e.g. Emergency Fund, New Laptop" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group" style="flex: 1;">
+                <label for="goal-target">Target Amount</label>
+                <input type="number" step="any" min="1" id="goal-target" class="input" placeholder="1000.00" required>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="goal-saved">Current Saved</label>
+                <input type="number" step="any" min="0" id="goal-saved" class="input" placeholder="0.00" required>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="goal-monthly">Monthly Allocation</label>
+                <input type="number" step="any" min="0" id="goal-monthly" class="input" placeholder="100.00" required>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="align-self: flex-start;">Add Goal</button>
+          </form>
+        </section>
+      </div>
+
+      <!-- SCREEN: DEBT -->
+      <div id="screen-debt" class="screen">
+        <div class="card" style="padding: 14px 20px; flex-direction: row; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <span class="card-eyebrow">Payoff Strategy</span>
+            <h3 style="font-size: 1.05rem;" id="debt-strategy-title">Snowball Method</h3>
+          </div>
+          <div class="btn-group">
+            <button type="button" class="btn-group-item active" id="btn-strategy-snowball">Snowball</button>
+            <button type="button" class="btn-group-item" id="btn-strategy-avalanche">Avalanche</button>
+          </div>
+        </div>
+
+        <section class="card hero-card">
+          <span class="card-eyebrow">Total Debt Remaining</span>
+          <div class="hero-figure" id="debt-total-balance">$0.00</div>
+          <div class="hero-microcopy">
+            Total Minimum Payments: <b id="debt-total-min">$0.00/mo</b> &middot; Est. Debt-Free: <b id="debt-payoff-horizon">...</b>
+          </div>
+        </section>
+
+        <section class="card">
+          <span class="card-eyebrow">Debts &amp; Credit Accounts</span>
+          <div id="debts-container" class="item-list">
+            <!-- Dynamic debt rows -->
+          </div>
+        </section>
+
+        <section class="card">
+          <span class="card-eyebrow">Add a Debt</span>
+          <form id="form-add-debt" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="form-group">
+              <label for="debt-name">Debt / Card Name</label>
+              <input type="text" id="debt-name" class="input" placeholder="e.g. Visa Credit Card, Student Loan" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group" style="flex: 1;">
+                <label for="debt-balance">Current Balance</label>
+                <input type="number" step="any" min="1" id="debt-balance" class="input" placeholder="1200.00" required>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="debt-apr">Annual APR (%)</label>
+                <input type="number" step="0.1" min="0" id="debt-apr" class="input" placeholder="19.9" required>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="debt-min">Min Payment / Mo</label>
+                <input type="number" step="any" min="1" id="debt-min" class="input" placeholder="50.00" required>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="align-self: flex-start;">Add Debt</button>
+          </form>
+        </section>
+      </div>
+
+      <!-- SCREEN: BILLS -->
+      <div id="screen-bills" class="screen">
+        <section class="card">
+          <div class="hero-head">
+            <span class="card-eyebrow">MONTHLY &amp; ANNUAL BILLS</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.88rem;">
+            Unpaid bills due before your next payday are automatically reserved from your safe spend.
+          </p>
+
+          <div id="bills-list" class="item-list">
+            <!-- Dynamic bills -->
+          </div>
+        </section>
+
+        <section class="card">
+          <span class="card-eyebrow">Add a Recurring Bill</span>
+          <form id="form-add-bill" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="form-group">
+              <label for="bill-name">Bill Name</label>
+              <input type="text" id="bill-name" class="input" placeholder="e.g. Rent, Electricity, Car Insurance" required>
+            </div>
+            <div class="form-row">
+              <div class="form-group" style="flex: 1;">
+                <label for="bill-amount">Amount</label>
+                <input type="number" step="any" min="0.01" id="bill-amount" class="input" placeholder="0.00" required>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="bill-recurrence">Frequency</label>
+                <select id="bill-recurrence" class="input">
+                  <option value="monthly">Monthly</option>
+                  <option value="annual">Annual (Spread over 12 mos)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group" style="flex: 1;">
+                <label for="bill-day">Due Day (1-31)</label>
+                <input type="number" min="1" max="31" id="bill-day" class="input" placeholder="1-31" required>
+              </div>
+              <div class="form-group" style="flex: 1;" id="group-bill-month">
+                <label for="bill-month">Due Month (for Annual)</label>
+                <select id="bill-month" class="input">
+                  <option value="1">January</option>
+                  <option value="2">February</option>
+                  <option value="3">March</option>
+                  <option value="4">April</option>
+                  <option value="5">May</option>
+                  <option value="6">June</option>
+                  <option value="7">July</option>
+                  <option value="8">August</option>
+                  <option value="9">September</option>
+                  <option value="10">October</option>
+                  <option value="11">November</option>
+                  <option value="12">December</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="align-self: flex-start;">Add Bill</button>
+          </form>
+        </section>
+      </div>
+
+      <!-- SCREEN: MONEY IN -->
+      <div id="screen-income" class="screen">
+        <header class="screen-header-row" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <div class="card-eyebrow">MONEY IN &middot; EXTRA CASHFLOW</div>
+            <h2 style="font-family: var(--text-serif); font-size: 1.7rem; margin: 4px 0 6px;">Everything else that turned up</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">Side gigs, refunds, bonuses, gifts, and unexpected cash outside your main paycheck.</p>
+          </div>
+          <button type="button" class="btn btn-primary" id="btn-open-add-income" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Record money in
+          </button>
+        </header>
+
+        <!-- KPI Hero Metric Cards -->
+        <div class="income-kpi-grid">
+          <div class="income-kpi-card arrived">
+            <div class="kpi-head">
+              <span class="status-indicator-dot dot-arrived"></span>
+              <span class="kpi-label">ARRIVED THIS MONTH</span>
+            </div>
+            <div class="kpi-figure" id="income-arrived-figure">$0.00</div>
+            <div class="kpi-sub" id="income-arrived-count">0 recorded</div>
+          </div>
+          <div class="income-kpi-card soon">
+            <div class="kpi-head">
+              <span class="status-indicator-dot dot-soon"></span>
+              <span class="kpi-label">STILL TO COME</span>
+            </div>
+            <div class="kpi-figure" id="income-soon-figure">$0.00</div>
+            <div class="kpi-sub">expected shortly</div>
+          </div>
+          <div class="income-kpi-card later">
+            <div class="kpi-head">
+              <span class="status-indicator-dot dot-later"></span>
+              <span class="kpi-label">LATER</span>
+            </div>
+            <div class="kpi-figure" id="income-later-figure">$0.00</div>
+            <div class="kpi-sub">pipeline &amp; future</div>
+          </div>
+        </div>
+
+        <!-- Income Stream List Card -->
+        <section class="card" style="margin-top: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <span class="card-eyebrow">ACTIVITY STREAM</span>
+              <h3 style="margin: 2px 0 0; font-family: var(--text-serif); font-size: 1.25rem;">Newest first</h3>
+            </div>
+            <div class="segmented-control" id="income-filter-pills">
+              <button type="button" class="segment-btn active" data-income-filter="all">All</button>
+              <button type="button" class="segment-btn" data-income-filter="arrived">Arrived</button>
+              <button type="button" class="segment-btn" data-income-filter="soon">Soon</button>
+              <button type="button" class="segment-btn" data-income-filter="later">Later</button>
+            </div>
+          </div>
+          <div id="income-items-list" class="income-list">
+            <!-- Dynamic rows rendered by JS -->
+          </div>
+        </section>
+      </div>
+
+      <!-- SCREEN: MILESTONES -->
+      <div id="screen-milestones" class="screen">
+        <header class="screen-header-row" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <div class="card-eyebrow">MILESTONES &middot; CALM MOMENTUM</div>
+            <h2 style="font-family: var(--text-serif); font-size: 1.7rem; margin: 4px 0 6px;">Things that already happened</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">Small wins, quiet breakthroughs, and financial peace markers you've secured so far.</p>
+          </div>
+          <div class="segmented-control" id="milestones-filter-pills">
+            <button type="button" class="segment-btn active" data-milestone-filter="all">All</button>
+            <button type="button" class="segment-btn" data-milestone-filter="reached">Reached</button>
+            <button type="button" class="segment-btn" data-milestone-filter="pending">Not yet</button>
+          </div>
+        </header>
+
+        <!-- Milestones Hero Progress Banner -->
+        <section class="card milestone-hero-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+            <div>
+              <span class="card-eyebrow" style="color: rgba(255,255,255,0.75);">YOUR MOMENTUM</span>
+              <h3 style="margin: 4px 0 2px; font-family: var(--text-serif); font-size: 1.5rem; color: #fff;" id="milestones-score-display">0 of 8 reached</h3>
+              <p style="margin: 0; font-size: 0.88rem; color: rgba(255,255,255,0.85);">You don't need a perfect streak. You just need to keep coming back.</p>
+            </div>
+            <div style="text-align: right; min-width: 140px;">
+              <span style="font-size: 1.8rem; font-weight: 700; color: #fff;" id="milestones-percent-display">0%</span>
+              <div style="font-size: 0.78rem; color: rgba(255,255,255,0.7);">completed</div>
+            </div>
+          </div>
+          <div class="milestone-progress-track">
+            <div class="milestone-progress-fill" id="milestones-progress-bar" style="width: 0%;"></div>
+          </div>
+        </section>
+
+        <!-- Milestones Grid -->
+        <div id="milestones-grid" class="milestones-grid" style="margin-top: 20px;">
+          <!-- Dynamically populated cards -->
+        </div>
+      </div>
+
+      <!-- SCREEN: SETTINGS -->
+      <div id="screen-settings" class="screen">
+        <!-- How It Works Card in Settings -->
+        <section class="card" id="card-how-it-works-settings" style="border-left: 4px solid var(--primary);">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 260px;">
+              <span class="card-eyebrow">GUIDE &middot; A CALM START</span>
+              <h3 style="margin: 4px 0 6px; font-family: var(--text-serif); font-size: 1.25rem;">How This Planner Works</h3>
+              <p style="color: var(--text-muted); font-size: 0.88rem; margin: 0; line-height: 1.45;">
+                Six simple steps to master your everyday money with zero guilt. Transparent math, real checking balance, and no bank linking required.
+              </p>
+            </div>
+            <button type="button" class="btn btn-primary" id="btn-settings-open-how-it-works" style="white-space: nowrap; font-size: 0.85rem; padding: 8px 16px;">
+              Open Full Guide
+            </button>
+          </div>
+        </section>
+
+        <!-- RECOVERY COPY & OTHER DEVICES CARD -->
+        <section class="card device-sync-card" id="card-device-sync">
+          <div class="sync-card-head">
+            <div>
+              <div class="sync-card-eyebrow-row">
+                <span class="card-eyebrow" style="margin-bottom: 0;">RECOVERY COPY &middot; OTHER DEVICES</span>
+                <button type="button" class="sync-help-badge" id="btn-sync-help-badge" title="Help for phone and computer">?</button>
+              </div>
+              <h3 class="sync-card-title">Use it on your phone and computer</h3>
+            </div>
+            <span class="sync-pill" id="sync-status-pill" data-state="synced">
+              <span class="sync-pill-dot"></span> Synced
+            </span>
+          </div>
+
+          <p class="sync-card-note">
+            Changes save here first, then your encrypted copy online and any connected device are updated automatically.
+          </p>
+
+          <!-- Recovery Copy Section -->
+          <div class="sync-section-row" id="sync-recovery-row">
+            <div class="sync-status-line">
+              <span class="sync-check-icon">&#10003;</span>
+              <strong>Recovery copy is on.</strong>
+            </div>
+            <p class="sync-subtext">
+              Your recovery key brings everything back onto any device, even if this one is wiped. Keep it where you will find it.
+            </p>
+            <div class="sync-btn-row">
+              <button type="button" class="btn btn-outline" id="btn-show-recovery-key">Show my recovery key</button>
+            </div>
+          </div>
+
+          <!-- Connected Device Section -->
+          <div class="sync-section-row" id="sync-connected-row">
+            <div class="sync-status-line">
+              <span class="sync-check-icon">&#10003;</span>
+              <strong>This device is connected.</strong>
+            </div>
+            <div class="sync-btn-row" style="margin-top: 10px;">
+              <button type="button" class="btn btn-primary" id="btn-open-sync-pair">Connect another device</button>
+              <button type="button" class="btn btn-outline" id="btn-open-sync-join-connected">I already use this planner</button>
+              <button type="button" class="btn btn-outline" id="btn-sync-now">Sync now</button>
+            </div>
+          </div>
+
+          <!-- Disconnected Option (shown when not connected) -->
+          <div class="sync-section-row" id="sync-disconnected-row" style="display: none;">
+            <p class="sync-subtext" style="margin-top: 0;">
+              Your planner already saves on this device. Turn on syncing only if you want the same information on another device.
+            </p>
+            <div class="sync-btn-row">
+              <button type="button" class="btn btn-primary" id="btn-sync-turn-on">Connect another device</button>
+              <button type="button" class="btn btn-outline" id="btn-open-sync-join">I already use this planner</button>
+            </div>
+          </div>
+
+          <!-- Connection Options (Collapsible Details) -->
+          <details class="sync-options-details">
+            <summary class="sync-options-summary">Connection options</summary>
+            <div class="sync-options-content">
+              <p class="sync-options-note">
+                Your budget is encrypted before it leaves this device. There is no email, password, bank connection or subscription.
+              </p>
+              <div class="sync-options-btns">
+                <button type="button" class="btn btn-ghost sync-btn-sm" id="btn-sync-stop">Stop syncing on this device</button>
+                <button type="button" class="btn btn-ghost sync-btn-sm" id="btn-sync-delete" style="color: var(--danger);">Delete the synced copy everywhere</button>
+              </div>
+            </div>
+          </details>
+
+          <!-- Step-by-step Help Footer -->
+          <div class="sync-footer-help">
+            <button type="button" class="sync-footer-link" id="btn-open-sync-step-help">
+              Step-by-step help for phone and computer &rarr;
+            </button>
+            <span class="sync-footer-sub">opens a guide right here in your planner</span>
+          </div>
+        </section>
+
+        <section class="card" id="card-make-it-yours">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px;">
+            <h3 class="card-eyebrow" style="font-size: 1.05rem; font-weight: 700; color: var(--text-main); margin-bottom: 0;">Make it yours</h3>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Preferences &amp; Appearance</span>
+          </div>
+
+          <!-- Top Row: Name & Planner Title (Two-Column) -->
+          <div class="form-row" style="margin-bottom: 14px;">
+            <div class="form-group" style="flex: 1;">
+              <label for="setting-user-name" style="font-weight: 600; font-size: 0.85rem; margin-bottom: 6px; display: block;">Your name (optional)</label>
+              <input type="text" id="setting-user-name" class="input" placeholder="e.g. rian" maxlength="40">
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label for="setting-planner-title" style="font-weight: 600; font-size: 0.85rem; margin-bottom: 6px; display: block;">Planner title</label>
+              <input type="text" id="setting-planner-title" class="input" placeholder="My Everyday Money Plan" maxlength="60">
+            </div>
+          </div>
+
+          <!-- Bottom Row: Currency & Layout (Two-Column) -->
+          <div class="form-row" style="margin-bottom: 14px;">
+            <div class="form-group" style="flex: 1;">
+              <label for="setting-currency" style="font-weight: 600; font-size: 0.85rem; margin-bottom: 6px; display: block;">Currency</label>
+              <select id="setting-currency" class="input">
+                <option value="USD">USD ($)</option>
+                <option value="GBP">GBP (£)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="JPY">JPY (¥)</option>
+                <option value="INR">INR (₹)</option>
+                <option value="AUD">AUD (A$)</option>
+                <option value="CAD">CAD (C$)</option>
+                <option value="CHF">CHF (CHF)</option>
+                <option value="SEK">SEK (kr)</option>
+                <option value="PLN">PLN (zł)</option>
+                <option value="BRL">BRL (R$)</option>
+                <option value="ZAR">ZAR (R)</option>
+                <option value="AED">AED (AED)</option>
+                <option value="SGD">SGD (S$)</option>
+                <option value="IDR">IDR (Rp)</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex: 1;">
+              <label style="font-weight: 600; font-size: 0.85rem; margin-bottom: 6px; display: block;">Layout</label>
+              <div class="layout-toggle-pills" id="layout-toggle-container">
+                <button type="button" class="layout-pill active" data-layout="everything">Everything</button>
+                <button type="button" class="layout-pill" data-layout="simple">Simple</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SCREEN: APPEARANCE (THEMES & ACCENT COLOR SCHEMES) -->
+        <section class="card" id="card-appearance">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <h3 class="card-eyebrow" style="font-size: 0.82rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0;">APPEARANCE</h3>
+              <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--primary);"></span>
+            </div>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">light &amp; dark workspace</span>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0 0 16px 0;">Calm visual atmosphere designed for comfortable, low-stress daily budgeting.</p>
+
+          <div class="theme-picker" role="group" aria-label="Appearance">
+            <button type="button" class="theme-choice active" id="btn-theme-light" data-mode="light" aria-pressed="true">
+              <span class="theme-preview theme-preview--light" aria-hidden="true">
+                <span class="theme-mini-sidebar"></span>
+                <span class="theme-mini-body">
+                  <span class="theme-mini-card"></span>
+                  <span class="theme-mini-card"></span>
+                </span>
+              </span>
+              <span class="theme-choice-text">
+                <strong>Daylight Studio</strong>
+                <small>clean, calm and focused daylight</small>
+              </span>
+            </button>
+            <button type="button" class="theme-choice" id="btn-theme-dark" data-mode="dark" aria-pressed="false">
+              <span class="theme-preview theme-preview--dark" aria-hidden="true">
+                <span class="theme-mini-sidebar"></span>
+                <span class="theme-mini-body">
+                  <span class="theme-mini-card"></span>
+                  <span class="theme-mini-card"></span>
+                </span>
+              </span>
+              <span class="theme-choice-text">
+                <strong>Obsidian Slate</strong>
+                <small>deep slate and low eye fatigue</small>
+              </span>
+            </button>
+          </div>
+
+          <!-- Color Schemes Accent -->
+          <div style="margin-top: 20px; border-top: 1px solid var(--surface-border); padding-top: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
+              <div>
+                <label style="font-weight: 700; font-size: 0.88rem; color: var(--text-main); margin-bottom: 2px; display: block;">Color Scheme Accent</label>
+                <span style="font-size: 0.76rem; color: var(--text-muted);">Coordinated palette accents for charts, badges, and focus elements</span>
+              </div>
+            </div>
+            
+            <div class="theme-schemes-grid" id="theme-schemes-container">
+              <button type="button" class="theme-scheme-card active" data-scheme="royal-glimmer">
+                <div class="theme-swatch-dots">
+                  <span style="background: #3b2563;"></span>
+                  <span style="background: #6c55a0;"></span>
+                  <span style="background: #ece7f6;"></span>
+                </div>
+                <div class="theme-card-info">
+                  <div class="theme-card-title">Royal Glimmer</div>
+                  <div class="theme-card-sub">Deep Purple &amp; Lilac</div>
+                </div>
+              </button>
+
+              <button type="button" class="theme-scheme-card" data-scheme="urban-slate">
+                <div class="theme-swatch-dots">
+                  <span style="background: #334155;"></span>
+                  <span style="background: #64748b;"></span>
+                  <span style="background: #f1f5f9;"></span>
+                </div>
+                <div class="theme-card-info">
+                  <div class="theme-card-title">Urban Slate</div>
+                  <div class="theme-card-sub">Slate &amp; Gunmetal</div>
+                </div>
+              </button>
+
+              <button type="button" class="theme-scheme-card" data-scheme="jade-pebble">
+                <div class="theme-swatch-dots">
+                  <span style="background: #0f766e;"></span>
+                  <span style="background: #2dd4bf;"></span>
+                  <span style="background: #e6f4f1;"></span>
+                </div>
+                <div class="theme-card-info">
+                  <div class="theme-card-title">Jade Pebble</div>
+                  <div class="theme-card-sub">Forest &amp; Sage Teal</div>
+                </div>
+              </button>
+
+              <button type="button" class="theme-scheme-card" data-scheme="amber-walnut">
+                <div class="theme-swatch-dots">
+                  <span style="background: #b45309;"></span>
+                  <span style="background: #f59e0b;"></span>
+                  <span style="background: #fef3c7;"></span>
+                </div>
+                <div class="theme-card-info">
+                  <div class="theme-card-title">Amber Walnut</div>
+                  <div class="theme-card-sub">Warm Amber &amp; Ochre</div>
+                </div>
+              </button>
+
+              <button type="button" class="theme-scheme-card" data-scheme="sapphire-marina">
+                <div class="theme-swatch-dots">
+                  <span style="background: #1d4ed8;"></span>
+                  <span style="background: #60a5fa;"></span>
+                  <span style="background: #eff6ff;"></span>
+                </div>
+                <div class="theme-card-info">
+                  <div class="theme-card-title">Sapphire Marina</div>
+                  <div class="theme-card-sub">Ocean Navy &amp; Indigo</div>
+                </div>
+              </button>
+
+              <button type="button" class="theme-scheme-card" data-scheme="inked-vichy">
+                <div class="theme-swatch-dots">
+                  <span style="background: #1e293b;"></span>
+                  <span style="background: #0d9488;"></span>
+                  <span style="background: #ccfbf1;"></span>
+                </div>
+                <div class="theme-card-info">
+                  <div class="theme-card-title">Inked Vichy</div>
+                  <div class="theme-card-sub">Charcoal &amp; Modern Teal</div>
+                </div>
+              </button>
+
+              <button type="button" class="theme-scheme-card" data-scheme="rose-quartz">
+                <div class="theme-swatch-dots">
+                  <span style="background: #9f1239;"></span>
+                  <span style="background: #fb7185;"></span>
+                  <span style="background: #ffe4e6;"></span>
+                </div>
+                <div class="theme-card-info">
+                  <div class="theme-card-title">Rose Quartz</div>
+                  <div class="theme-card-sub">Maroon &amp; Blush Rose</div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <span class="card-eyebrow">Checking Account Balance</span>
+          <p style="color: var(--text-muted); font-size: 0.88rem;">
+            Update your balance whenever you check your bank. Transactions and bills paid prior to this moment will not be deducted again.
+          </p>
+          <form id="form-update-balance" class="form-row">
+            <input type="number" step="any" min="0" id="input-new-balance" class="input" placeholder="Real Balance" required>
+            <button type="submit" class="btn btn-primary">Update</button>
+          </form>
+          <p id="balance-as-of-note" class="item-meta" style="margin-top: 4px;">Balance last set: ...</p>
+        </section>
+
+        <section class="card">
+          <span class="card-eyebrow">Payday &amp; Income Setup</span>
+          <form id="form-update-payday" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="form-row">
+              <div class="form-group" style="flex: 1;">
+                <label for="pay-amount">Paycheck / Main Income Amount</label>
+                <input type="number" step="any" min="0" id="pay-amount" class="input" placeholder="2500.00" required>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="pay-anchor">Reference Payday Date</label>
+                <input type="date" id="pay-anchor" class="input" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group" style="flex: 1;">
+                <label for="pay-cycle">Pay Frequency</label>
+                <select id="pay-cycle" class="input">
+                  <option value="weekly">Every Week (7 days)</option>
+                  <option value="biweekly">Every Two Weeks (14 days)</option>
+                  <option value="semimonthly">Twice a Month (1st & 15th)</option>
+                  <option value="monthly">Monthly</option>
+                </select>
+              </div>
+              <div class="form-group" style="flex: 1;">
+                <label for="pay-setaside">Set Aside Money</label>
+                <input type="number" step="any" min="0" id="pay-setaside" class="input" placeholder="0.00">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="align-self: flex-start;">Save Settings</button>
+          </form>
+        </section>
+
+        <section class="card" id="card-manage-categories">
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <span class="card-eyebrow">Spend Categories &amp; Quick Buttons</span>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">Syncs with modal &amp; envelopes</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.88rem; margin: 4px 0 12px;">
+            Manage categories for your spends. Check <strong>Quick Button</strong> to show it directly in the <strong>Log a spend</strong> modal.
+          </p>
+
+          <div id="settings-categories-list" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;">
+            <!-- Category items rendered dynamically -->
+          </div>
+
+          <form id="form-add-category" style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding-top: 10px; border-top: 1px dashed var(--surface-border);">
+            <input type="text" id="input-new-cat-name" class="input" placeholder="New category name (e.g. Snacks, Coffee)" required style="flex: 2; min-width: 170px; padding: 8px 12px; font-size: 0.85rem;">
+            <input type="color" id="input-new-cat-color" value="#e07a5f" title="Choose color" style="width: 38px; height: 38px; border: 1px solid var(--surface-border); border-radius: 8px; cursor: pointer; padding: 2px; background: none;">
+            <label style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem; cursor: pointer; color: var(--text-main); margin: 0 4px;">
+              <input type="checkbox" id="input-new-cat-isquick" checked style="accent-color: var(--primary); width: 16px; height: 16px;">
+              <span>Show in modal quick buttons</span>
+            </label>
+            <button type="submit" class="btn btn-primary" style="padding: 8px 14px; font-size: 0.85rem;">+ Add Category</button>
+          </form>
+        </section>
+
+        <section class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="card-eyebrow">Desktop Auto-Save &amp; Backup</span>
+            <span id="autosave-status-badge" class="autosave-pill inactive">Auto-Save: Off</span>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.88rem;">
+            Want your backup to take care of itself? Pick a file on your computer once, and every change saves into it automatically.
+          </p>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button type="button" id="btn-toggle-autosave" class="btn btn-primary">Choose Local File for Auto-Save</button>
+            <button type="button" id="btn-export-json" class="btn btn-outline">Export Backup (JSON)</button>
+            <button type="button" id="btn-export-csv" class="btn btn-outline">Export History (CSV)</button>
+            <label class="btn btn-outline" style="cursor: pointer;">
+              Restore Backup
+              <input type="file" id="input-import-json" accept=".json" style="display: none;">
+            </label>
+            <button type="button" id="btn-trigger-reset" class="btn btn-danger" style="margin-left: auto;">Reset Data / Start Fresh</button>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- 3. RIGHT MONTH DIVIDER TABS RAIL -->
+    <aside class="month-rail">
+      <button type="button" class="month-tab tab-jan" data-month="0">JAN</button>
+      <button type="button" class="month-tab tab-feb" data-month="1">FEB</button>
+      <button type="button" class="month-tab tab-mar" data-month="2">MAR</button>
+      <button type="button" class="month-tab tab-apr" data-month="3">APR</button>
+      <button type="button" class="month-tab tab-may" data-month="4">MAY</button>
+      <button type="button" class="month-tab tab-jun" data-month="5">JUN</button>
+      <button type="button" class="month-tab tab-jul" data-month="6">JUL</button>
+      <button type="button" class="month-tab tab-aug" data-month="7">AUG</button>
+      <button type="button" class="month-tab tab-sep" data-month="8">SEP</button>
+      <button type="button" class="month-tab tab-oct" data-month="9">OCT</button>
+      <button type="button" class="month-tab tab-nov" data-month="10">NOV</button>
+      <button type="button" class="month-tab tab-dec" data-month="11">DEC</button>
+    </aside>
+  </div>
+
+  <!-- QUICK ACTIONS / "GO TO A SCREEN" MODAL (Command Palette) -->
+  <dialog id="modal-quick-actions" class="planner-modal modal-quick-actions-dialog">
+    <div class="quick-actions-card">
+      <div class="quick-actions-header">
+        <div class="quick-actions-title-wrap">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <polyline points="9 21 3 21 3 15"></polyline>
+            <line x1="21" y1="3" x2="14" y2="10"></line>
+            <line x1="3" y1="21" x2="10" y2="14"></line>
+          </svg>
+          <h2 class="quick-actions-title">Go to a screen</h2>
+        </div>
+        <button type="button" class="modal-close-btn" data-close-modal="modal-quick-actions" title="Close (Esc)">&times;</button>
+      </div>
+
+      <p class="quick-actions-sub">
+        Start typing the name of a screen. Shortcut: type an amount and a category &mdash; <span class="quick-example">250 groceries</span> &mdash; to log a spend without leaving this box.
+      </p>
+
+      <div class="quick-actions-search-bar">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="input-quick-search" class="quick-search-input" placeholder="a screen name &mdash; or 250 groceries" autocomplete="off" spellcheck="false" />
+        <button type="button" id="btn-quick-search-clear" class="quick-search-clear" title="Clear input">&times;</button>
+      </div>
+
+      <div class="quick-actions-list" id="quick-actions-list" role="listbox">
+        <!-- Rendered dynamically by renderQuickActions() -->
+      </div>
+
+      <div class="quick-actions-footer">
+        <span>&uarr;&darr; move &middot; Enter chooses &middot; Esc closes &middot; Ctrl K anywhere</span>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- MODAL: LOG A SPEND POPUP (adhdbudget style) -->
+  <dialog id="modal-log-spend" class="planner-modal modal-log-spend-dialog">
+    <div class="modal-header">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <h3 class="modal-title">Log a spend</h3>
+        <button type="button" class="panel-help-badge" id="btn-help-log-spend" title="Help / Guide" aria-label="Help">?</button>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span class="modal-meta-count" id="modal-logged-today-count">0 logged today</span>
+        <button type="button" class="modal-close-btn" data-close-modal="modal-log-spend">&times;</button>
+      </div>
+    </div>
+
+    <div class="modal-body-scroll">
+      <!-- Reference ADHD Budget Help Panel -->
+      <div class="help-panel" id="modal-log-help-panel" style="display: none;">
+        <p class="help-p">Where you write down what you just spent.</p>
+        <div class="help-row">
+          <p class="help-row-body"><span class="help-lead">To do:</span> Type the amount, or tap <strong>+$1</strong>, <strong>+$5</strong>, <strong>+$10</strong> or <strong>+$20</strong> until it is right. Pick what kind of spending it was. Press the big button at the bottom: <strong>Add to today</strong>, or the day you chose.</p>
+        </div>
+        <p class="help-p help-p--why">Logging on the spot keeps your safe to spend number true.</p>
+        <div class="help-row">
+          <p class="help-row-label">GOOD TO KNOW</p>
+          <p class="help-row-body">Spent it on another day? Change <strong>Which day</strong> before you press the button, and the spend goes on that day. The button says which day it will add to. A spend you already logged can move too: find it under <strong>What you logged</strong> and press <strong>Edit</strong>.</p>
+          <p class="help-row-body" style="margin-top: 6px;">The note is optional.</p>
+        </div>
+        <div class="help-panel-foot">
+          <button type="button" class="help-panel-close" id="btn-close-log-help-panel">Close</button>
+        </div>
+      </div>
+
+      <!-- Live Well Amount Display -->
+      <div class="log-modal-well">
+        <output class="log-modal-well-figure num" id="modal-log-amount-display">$0.00</output>
+        <p class="log-modal-well-note" id="modal-log-well-note">type the exact amount or use the quick keys</p>
+      </div>
+
+      <!-- Exact Amount Field -->
+      <div class="form-group" style="margin-top: 12px;">
+        <label for="modal-input-exact" style="font-weight: 600; display: block; margin-bottom: 4px; font-size: 0.85rem;">Exact amount</label>
+        <div class="amount-input-wrap">
+          <input type="number" step="any" min="0" id="modal-input-exact" class="amount-input" placeholder="0.00" autocomplete="off" style="font-size: 1.25rem; font-weight: 700;">
+        </div>
+      </div>
+
+      <!-- Stepper Keys (+1, +5, +10, +20, ↺) -->
+      <div class="modal-keys-row" id="modal-steppers-container">
+        <!-- Populated dynamically based on currency -->
+      </div>
+
+      <!-- Category Chips -->
+      <div class="form-group" style="margin-top: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+          <label style="font-weight: 600; font-size: 0.85rem;">Category</label>
+        </div>
+        <div class="modal-chips-grid" id="modal-category-chips">
+          <!-- Populated dynamically from state.categories (Settings) -->
+        </div>
+        <div style="margin-top: 6px;">
+          <button type="button" class="btn-link" id="link-modal-edit-categories" style="font-size: 0.78rem; color: var(--text-muted); background: none; border: none; padding: 0; cursor: pointer; text-decoration: underline;">Edit these buttons</button>
+        </div>
+      </div>
+
+      <!-- Which day & Note in 2 columns -->
+      <div style="display: grid; grid-template-columns: 140px 1fr; gap: 10px; margin-top: 12px;">
+        <div class="form-group">
+          <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
+            <label for="modal-log-date" style="font-weight: 600; font-size: 0.82rem; margin-bottom: 0;">Which day</label>
+            <button type="button" class="panel-help-badge" id="btn-help-log-date" title="Help / Guide" aria-label="Help" style="font-size: 0.7rem; width: 16px; height: 16px;">?</button>
+          </div>
+          <input type="date" id="modal-log-date" class="input" style="padding: 6px 10px; font-size: 0.85rem;">
+        </div>
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+            <label for="modal-log-note" style="font-weight: 600; font-size: 0.82rem; margin-bottom: 0;">Note</label>
+            <span style="font-weight: normal; font-size: 0.72rem; color: var(--text-muted);">optional</span>
+          </div>
+          <input type="text" id="modal-log-note" class="input" maxlength="80" placeholder="coffee, lunch, etc." style="padding: 6px 10px; font-size: 0.85rem;">
+        </div>
+      </div>
+    </div>
+
+    <!-- Sticky Bottom Actions -->
+    <div class="modal-sticky-actions">
+      <button type="button" class="btn btn-primary btn--block" id="btn-modal-log-submit" style="width: 100%; padding: 12px; font-size: 1rem; font-weight: 600;">
+        Add to today
+      </button>
+      <button type="button" class="btn btn-ghost btn--block" data-close-modal="modal-log-spend" style="width: 100%; padding: 8px; font-size: 0.9rem; margin-top: 6px;">
+        Close
+      </button>
+      <p class="modal-foot-caption">quick when you want it, exact when you need it</p>
+    </div>
+  </dialog>
+
+  <!-- MODAL: UPDATE CHECKING BALANCE POPUP -->
+  <dialog id="modal-update-balance" class="planner-modal">
+    <div class="modal-header">
+      <h3 class="modal-title">What's in Checking?</h3>
+      <button type="button" class="modal-close-btn" data-close-modal="modal-update-balance">&times;</button>
+    </div>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+      Look it up in your bank app &ndash; Today starts from whatever is actually in checking right now.
+    </p>
+    <form id="form-modal-update-balance" style="display: flex; flex-direction: column; gap: 14px;">
+      <div class="form-group">
+        <label for="modal-input-balance" style="font-weight: 600;">Real Checking Balance</label>
+        <input type="number" step="any" min="0" id="modal-input-balance" class="amount-input" placeholder="0.00" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="margin-top: 6px;">Set Balance</button>
+    </form>
+  </dialog>
+
+  <!-- MODAL: RESET DATA CONFIRM -->
+  <dialog id="modal-reset-confirm" class="planner-modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Reset &amp; Start Fresh</h3>
+      <button type="button" class="modal-close-btn" data-close-modal="modal-reset-confirm">&times;</button>
+    </div>
+    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
+      Do you want to start with a completely empty ledger (all numbers set to $0) or reset back to the default example numbers?
+    </p>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <button type="button" class="btn btn-danger" id="btn-confirm-empty-reset">Start Fresh (All $0)</button>
+      <button type="button" class="btn btn-outline" id="btn-confirm-demo-reset">Reset to Example Numbers</button>
+      <button type="button" class="btn btn-ghost" data-close-modal="modal-reset-confirm">Cancel</button>
+    </div>
+  </dialog>
+
+  <!-- MODAL: ADD MONEY IN -->
+  <dialog id="modal-add-income" class="planner-modal" style="max-width: 480px; width: 100%;">
+    <div class="modal-card" style="padding: 2px;">
+      <header class="modal-card-head" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+        <div>
+          <div class="modal-eyebrow" style="color: var(--primary); font-size: 0.72rem; letter-spacing: 0.08em; font-weight: 700; text-transform: uppercase;">EXTRA CASHFLOW</div>
+          <h2 class="modal-title" style="margin: 2px 0 0; font-family: var(--text-serif); font-size: 1.35rem; font-weight: 700; color: var(--text-main);">Record money in</h2>
+        </div>
+        <button type="button" class="modal-close-btn" data-close-modal="modal-add-income" aria-label="Close dialog">&times;</button>
+      </header>
+      <form id="form-add-income" style="display: flex; flex-direction: column; gap: 14px;">
+        <div class="form-group">
+          <label class="field-label" for="income-source-input" style="font-weight: 600; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Source / Description</label>
+          <input type="text" id="income-source-input" class="input" placeholder="e.g. Freelance design, sold sofa, tax refund" required>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label class="field-label" for="income-amount-input" style="font-weight: 600; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Amount ($)</label>
+            <input type="number" id="income-amount-input" class="input" step="0.01" min="0.01" placeholder="150.00" required>
+          </div>
+          <div class="form-group">
+            <label class="field-label" for="income-date-input" style="font-weight: 600; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Date</label>
+            <input type="date" id="income-date-input" class="input" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="field-label" style="font-weight: 600; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Status</label>
+          <div class="segmented-control" id="income-status-pills" style="width: 100%; display: flex; padding: 4px;">
+            <button type="button" class="segment-btn active" data-status-val="arrived" style="flex: 1; justify-content: center; padding: 8px 12px;">
+              <span class="status-indicator-dot dot-arrived"></span> Arrived
+            </button>
+            <button type="button" class="segment-btn" data-status-val="soon" style="flex: 1; justify-content: center; padding: 8px 12px;">
+              <span class="status-indicator-dot dot-soon"></span> Soon
+            </button>
+            <button type="button" class="segment-btn" data-status-val="later" style="flex: 1; justify-content: center; padding: 8px 12px;">
+              <span class="status-indicator-dot dot-later"></span> Later
+            </button>
+          </div>
+          <input type="hidden" id="income-status-value" value="arrived">
+        </div>
+        <div class="form-group">
+          <label class="field-label" for="income-notes-input" style="font-weight: 600; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Notes (optional)</label>
+          <input type="text" id="income-notes-input" class="input" placeholder="e.g. In checking account, invoice sent">
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px;">
+          <button type="button" class="btn btn-ghost" data-close-modal="modal-add-income">Cancel</button>
+          <button type="submit" class="btn btn-primary" style="padding: 10px 22px; font-weight: 600;">Save Money In</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- MODAL: HOW IT WORKS / GETTING STARTED GUIDE -->
+  <dialog id="modal-how-it-works" class="planner-modal modal-guide-dialog">
+    <div class="modal-header">
+      <div>
+        <span class="card-eyebrow" style="color: var(--primary); font-size: 0.72rem; letter-spacing: 0.08em;">BUDGET AND PLANNER &middot; STEP-BY-STEP</span>
+        <h3 class="modal-title" style="margin: 2px 0 0; font-family: var(--text-serif); font-size: 1.35rem;">How This Planner Works</h3>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <button type="button" class="btn btn-outline" id="btn-print-guide" style="font-size: 0.8rem; padding: 4px 10px; display: inline-flex; align-items: center; gap: 5px;" title="Print guide or save as PDF">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Print guide
+        </button>
+        <button type="button" class="modal-close-btn" data-close-modal="modal-how-it-works">&times;</button>
+      </div>
+    </div>
+
+    <div class="guide-body-scroll">
+      <!-- Philosophy Banner -->
+      <div class="guide-callout-banner">
+        <strong>The Core Idea:</strong> Most budgeting apps fail ADHD minds by asking you to track 50 rigid categories, inducing guilt when plans change. Budget and Planner throws all that out and focuses on <strong>One True Number: Safe to Spend Today</strong>. Everything counts down from real money you actually have.
+      </div>
+
+      <!-- Steps 1 to 6 -->
+      <div class="guide-steps-list">
+        <!-- Step 1 -->
+        <div class="guide-step-card">
+          <div class="guide-step-num">1</div>
+          <div class="guide-step-content">
+            <div class="guide-step-title">
+              <span>Put in what's actually in Checking</span>
+              <button type="button" class="btn btn-outline guide-step-btn" id="guide-btn-step1">Set Checking &rarr;</button>
+            </div>
+            <div class="guide-step-desc">
+              Open your mobile banking app, see what is in your daily checking account right now, and enter it into Budget and Planner. We never guess the future &mdash; every calculation starts from real money you actually own today.
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="guide-step-card">
+          <div class="guide-step-num">2</div>
+          <div class="guide-step-content">
+            <div class="guide-step-title">
+              <span>Set up your Paychecks &amp; Cycle</span>
+              <button type="button" class="btn btn-outline guide-step-btn" id="guide-btn-step2">Setup Payday &rarr;</button>
+            </div>
+            <div class="guide-step-desc">
+              Set when your next paycheck lands and your pay frequency (monthly, biweekly, or weekly). The app counts down the remaining days so you always know how long your money needs to stretch.
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="guide-step-card">
+          <div class="guide-step-num">3</div>
+          <div class="guide-step-content">
+            <div class="guide-step-title">
+              <span>Add your Recurring Bills &amp; Must-Pays</span>
+              <button type="button" class="btn btn-outline guide-step-btn" id="guide-btn-step3">Add Bills &rarr;</button>
+            </div>
+            <div class="guide-step-desc">
+              Enter rent, utilities, subscriptions, and debts. Any bill due before your next payday is automatically set aside and locked away, so you never accidentally spend rent on daily treats.
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="guide-step-card">
+          <div class="guide-step-num">4</div>
+          <div class="guide-step-content">
+            <div class="guide-step-title">
+              <span>Wake up &amp; check "Safe to Spend" on Today</span>
+              <button type="button" class="btn btn-outline guide-step-btn" id="guide-btn-step4">View Today &rarr;</button>
+            </div>
+            <div class="guide-step-desc">
+              Check in every morning. The big number on your Today dashboard tells you exactly what is safe to spend today without jeopardizing upcoming bills.
+            </div>
+            <div class="guide-step-formula">
+              <strong>Transparent Formula:</strong><br>
+              Checking Balance &minus; Bills Due Before Payday &minus; Annual Sinking Reserves &minus; Today's Spends = <strong>Safe to Spend</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="guide-step-card">
+          <div class="guide-step-num">5</div>
+          <div class="guide-step-content">
+            <div class="guide-step-title">
+              <span>Log Spends in 2 Taps (Low Friction)</span>
+              <button type="button" class="btn btn-primary guide-step-btn" id="guide-btn-step5">+ Log a Spend &rarr;</button>
+            </div>
+            <div class="guide-step-desc">
+              Whenever you buy something, open the keypad in the sidebar or tap the header button. Enter the amount or tap quick-steppers (+5, +10, +20) and pick a category. Done in 3 seconds, your safe balance updates instantly.
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 6 -->
+        <div class="guide-step-card">
+          <div class="guide-step-num">6</div>
+          <div class="guide-step-content">
+            <div class="guide-step-title">
+              <span>Envelopes for Flexible Limits (Optional)</span>
+              <button type="button" class="btn btn-outline guide-step-btn" id="guide-btn-step6">Envelopes &rarr;</button>
+            </div>
+            <div class="guide-step-desc">
+              Want to keep an eye on coffee, dining out, or online shopping? Set flexible monthly envelopes in the Envelopes tab to pace category spending without rigid restrictions.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Three Golden Rules -->
+      <div class="guide-rules-box">
+        <div class="guide-rules-title">🛡️ 3 Golden Rules for Peace of Mind</div>
+        <div class="guide-rules-grid">
+          <div class="guide-rule-item">
+            <strong>No Double Counting</strong>
+            When you update your bank balance, past logged spends and already-paid bills are never deducted twice (smart timestamp tracking).
+          </div>
+          <div class="guide-rule-item">
+            <strong>100% Private &amp; Offline</strong>
+            Zero bank linking or login credentials required. Your data stays entirely in your browser with easy JSON/CSV export backups.
+          </div>
+          <div class="guide-rule-item">
+            <strong>Zero Guilt Pacing</strong>
+            If you overspend today, your remaining allowance recalculates smoothly across future days without guilt trips.
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div style="display: flex; justify-content: flex-end; padding-top: 8px;">
+        <button type="button" class="btn btn-primary" data-close-modal="modal-how-it-works" style="padding: 10px 22px;">Got It, Let's Start &rarr;</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- MODAL: CONNECT ANOTHER DEVICE -->
+  <dialog id="modal-device-pair" class="planner-modal modal-device-dialog">
+    <div class="modal-device-container">
+      <div class="modal-device-header">
+        <span class="card-eyebrow" style="margin-bottom: 0;">CONNECT ANOTHER DEVICE</span>
+        <button type="button" class="modal-close-btn" data-close-modal="modal-device-pair">&times;</button>
+      </div>
+      <h2 class="modal-device-heading">Enter this code on your other device.</h2>
+      
+      <div class="device-code-display" id="device-pairing-code-display" aria-label="Connection code">553 699</div>
+
+      <p class="device-instructions">
+        Open this planner on the other device, choose <strong>I already use this planner</strong>, and enter the code. It expires in <span id="device-code-countdown">10 minutes</span>.
+      </p>
+
+      <div class="device-waiting-row">
+        <span class="device-spin-icon"></span>
+        <span class="device-waiting-text" id="device-waiting-label">Waiting for the other device&hellip;</span>
+      </div>
+
+      <div class="device-dialog-actions">
+        <button type="button" class="btn btn-ghost" data-close-modal="modal-device-pair">Cancel</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- MODAL: I ALREADY USE THIS PLANNER (JOIN / ENTER CODE) -->
+  <dialog id="modal-device-join" class="planner-modal modal-device-dialog">
+    <div class="modal-device-container">
+      <div class="modal-device-header">
+        <span class="card-eyebrow" style="margin-bottom: 0;">CONNECT THIS DEVICE</span>
+        <button type="button" class="modal-close-btn" data-close-modal="modal-device-join">&times;</button>
+      </div>
+      <h2 class="modal-device-heading">Enter the code from your other device.</h2>
+      
+      <p class="device-instructions" style="margin-bottom: 16px;">
+        Open <strong>Settings &rarr; Connect another device</strong> on your phone or computer, and enter the 6-digit code shown on that screen:
+      </p>
+
+      <div class="device-input-box-wrap">
+        <input type="text" id="input-sync-pair-code" class="device-code-input" placeholder="553 699" maxlength="7" autocomplete="off" spellcheck="false" inputmode="numeric">
+      </div>
+
+      <div id="device-join-feedback" class="device-join-feedback" style="display: none;"></div>
+
+      <div class="device-dialog-actions" style="margin-top: 22px;">
+        <button type="button" class="btn btn-ghost" data-close-modal="modal-device-join">Cancel</button>
+        <button type="button" class="btn btn-primary" id="btn-submit-pair-code">Connect this device</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- MODAL: RECOVERY KEY -->
+  <dialog id="modal-recovery-key" class="planner-modal modal-device-dialog">
+    <div class="modal-device-container">
+      <div class="modal-device-header">
+        <span class="card-eyebrow" style="margin-bottom: 0;">RECOVERY COPY &middot; BACKUP KEY</span>
+        <button type="button" class="modal-close-btn" data-close-modal="modal-recovery-key">&times;</button>
+      </div>
+      <h2 class="modal-device-heading">Your planner recovery key</h2>
+      
+      <p class="device-instructions">
+        Keep this key somewhere safe. If this device is ever wiped or replaced, this key brings back your entire budget on any device.
+      </p>
+
+      <div class="device-recovery-box" id="display-recovery-key-text">
+        PL-8A2F-9C4D-7E1B
+      </div>
+
+      <div class="device-dialog-actions" style="margin-top: 20px;">
+        <button type="button" class="btn btn-outline" id="btn-copy-recovery-key">Copy key</button>
+        <button type="button" class="btn btn-primary" data-close-modal="modal-recovery-key">Done</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- MODAL: STEP-BY-STEP HELP -->
+  <dialog id="modal-sync-help" class="planner-modal modal-device-dialog" style="max-width: 540px;">
+    <div class="modal-device-container">
+      <div class="modal-device-header">
+        <span class="card-eyebrow" style="margin-bottom: 0;">STEP-BY-STEP &middot; PHONE &amp; COMPUTER</span>
+        <button type="button" class="modal-close-btn" data-close-modal="modal-sync-help">&times;</button>
+      </div>
+      <h2 class="modal-device-heading">How sync works on your devices</h2>
+      
+      <div class="sync-help-steps-list">
+        <div class="sync-help-step-item">
+          <strong>1. Always saves locally first</strong>
+          Budget and Planner never lags or locks you out when offline. All spends, bills, and settings are saved on this device first.
+        </div>
+        <div class="sync-help-step-item">
+          <strong>2. Zero passwords or bank logins</strong>
+          Your data is encrypted end-to-end. We don't ask for emails, subscriptions, or financial accounts.
+        </div>
+        <div class="sync-help-step-item">
+          <strong>3. Pairing takes 10 seconds</strong>
+          Click <strong>Connect another device</strong> to get a one-time 6-digit code, then enter it on your other device to keep both synchronized.
+        </div>
+      </div>
+
+      <div class="device-dialog-actions" style="margin-top: 20px;">
+        <button type="button" class="btn btn-primary" data-close-modal="modal-sync-help">Got it</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module" src="./src/main.ts"></script>
+</body>
+</html>
