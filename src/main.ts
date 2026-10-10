@@ -3028,7 +3028,7 @@ const QUICK_SCREENS = [
   { id: 'settings', label: 'Go to Settings', sublabel: 'Currency, theme, auto-save & device sync' }
 ];
 
-function parseQuickSpend(query: string): { amountCents: number; category: string } | null {
+function parseQuickSpend(query: string): { amountCents: number; category: string; note: string } | null {
   const trimmed = query.trim();
   if (!trimmed) return null;
   const match = trimmed.match(/^\$?(\d+(?:\.\d{1,2})?)\s*(.*)$/);
@@ -3036,10 +3036,9 @@ function parseQuickSpend(query: string): { amountCents: number; category: string
   const val = parseFloat(match[1]);
   if (isNaN(val) || val <= 0) return null;
   const cents = Math.round(val * 100);
-  let cat = match[2].trim();
-  if (!cat) cat = 'General';
-  cat = cat.charAt(0).toUpperCase() + cat.slice(1);
-  return { amountCents: cents, category: cat };
+  let rawNote = match[2].trim();
+  let cat = rawNote ? rawNote.charAt(0).toUpperCase() + rawNote.slice(1) : 'General';
+  return { amountCents: cents, category: cat, note: rawNote || 'Quick logged' };
 }
 
 let activeQuickIndex = 0;
@@ -3053,7 +3052,7 @@ function renderQuickActions(query: string = '') {
 
   if (quickSpend) {
     html += `
-      <div class="quick-action-item quick-action-spend-action active" data-type="spend" data-amount="${quickSpend.amountCents}" data-category="${escapeHtml(quickSpend.category)}" role="option" tabindex="0">
+      <div class="quick-action-item quick-action-spend-action active" data-type="spend" data-amount="${quickSpend.amountCents}" data-category="${escapeHtml(quickSpend.category)}" data-note="${escapeHtml(quickSpend.note)}" role="option" tabindex="0">
         <div class="quick-action-left">
           <div class="quick-action-icon-wrap">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -3116,9 +3115,10 @@ function executeQuickAction(itemEl: HTMLElement) {
   if (type === 'spend') {
     const amount = parseInt(itemEl.getAttribute('data-amount') || '0', 10);
     const category = itemEl.getAttribute('data-category') || 'General';
+    const note = itemEl.getAttribute('data-note') || (category !== 'General' ? category : 'Quick logged');
     if (amount > 0) {
       const prevTransactions = [...state.transactions];
-      state = addTransaction(state, amount, category, getTodayStr(), 'Quick logged from command palette');
+      state = addTransaction(state, amount, category, getTodayStr(), note);
       const newTx = state.transactions.find(t => !prevTransactions.some(p => p.id === t.id));
 
       persistState();
