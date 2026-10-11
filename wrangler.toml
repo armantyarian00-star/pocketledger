@@ -7,7 +7,7 @@ command = "npm run build"
 
 [[kv_namespaces]]
 binding = "SYNC_KV"
-id = "4764e606171942798cde73b5870fde16"
+id = "ca3cdb1e9bcd4ea5b071cf16ba5a99c4"
 
 [assets]
 directory = "./dist"
