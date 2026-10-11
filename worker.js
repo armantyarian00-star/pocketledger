@@ -22,6 +22,7 @@ export default {
     if (url.pathname.startsWith('/api/sync/')) {
       const corsHeaders = {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
         'Access-Control-Allow-Origin': '*',
       };
 

@@ -121,7 +121,7 @@ async function pullSyncVaultSilent() {
   if (!state.sync?.isSynced || !state.sync?.vaultId) return;
   try {
     isSyncPulling = true;
-    const res = await fetch(`/api/sync/vault?id=${state.sync.vaultId}`);
+    const res = await fetch(`/api/sync/vault?id=${state.sync.vaultId}&_t=${Date.now()}`, { cache: 'no-store' });
     if (!res.ok) return;
     const data = await res.json();
     if (data.success && data.state && data.updatedAt) {
@@ -808,7 +808,7 @@ function openDevicePairModal() {
   if (pairPollInterval) clearInterval(pairPollInterval);
   pairPollInterval = setInterval(async () => {
     try {
-      const res = await fetch(`/api/sync/pair/status?code=${cleanCode}`);
+      const res = await fetch(`/api/sync/pair/status?code=${cleanCode}&_t=${Date.now()}`, { cache: 'no-store' });
       if (!res.ok) return;
       const data = await res.json();
 
@@ -816,14 +816,11 @@ function openDevicePairModal() {
       if (data.status === 'waiting_approval' || (data.guestDeviceId && !data.paired)) {
         const stepCode = document.getElementById('pair-step-code');
         const stepCheck = document.getElementById('pair-step-check');
-        if (stepCode && stepCode.style.display !== 'none') {
-          stepCode.style.display = 'none';
-        }
-        if (stepCheck && stepCheck.style.display !== 'block') {
-          stepCheck.style.display = 'block';
-        }
-        if (data.checkDigits && hostCheckDisplay) {
-          hostCheckDisplay.textContent = data.checkDigits;
+        if (stepCode) stepCode.style.display = 'none';
+        if (stepCheck) stepCheck.style.display = 'block';
+        const hostCheckDisplayEl = document.getElementById('host-check-number-display');
+        if (data.checkDigits && hostCheckDisplayEl) {
+          hostCheckDisplayEl.textContent = data.checkDigits;
         }
       }
 
@@ -3661,7 +3658,7 @@ document.getElementById('btn-submit-pair-code')?.addEventListener('click', async
     if (joinPollInterval) clearInterval(joinPollInterval);
     joinPollInterval = setInterval(async () => {
       try {
-        const statusRes = await fetch(`/api/sync/pair/status?code=${raw}`);
+        const statusRes = await fetch(`/api/sync/pair/status?code=${raw}&_t=${Date.now()}`, { cache: 'no-store' });
         if (!statusRes.ok) return;
         const statusData = await statusRes.json();
 
@@ -3674,7 +3671,7 @@ document.getElementById('btn-submit-pair-code')?.addEventListener('click', async
           // Fetch the synced vault state from host
           const targetVaultId = statusData.vaultId || data.vaultId;
           if (targetVaultId) {
-            const vaultRes = await fetch(`/api/sync/vault?id=${targetVaultId}`);
+            const vaultRes = await fetch(`/api/sync/vault?id=${targetVaultId}&_t=${Date.now()}`, { cache: 'no-store' });
             if (vaultRes.ok) {
               const vaultJson = await vaultRes.json();
               if (vaultJson.success && vaultJson.state) {
