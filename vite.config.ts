@@ -4,9 +4,11 @@ import path from 'path';
 
 interface PairingSession {
   code: string;
+  checkDigits: string;
   hostDeviceId: string;
   state: any;
   vaultId: string;
+  status?: string;
   createdAt: number;
   expiresAt: number;
   guestDeviceId?: string;
@@ -88,11 +90,14 @@ function localSyncPlugin(): Plugin {
           return sendJson(400, { success: false, error: 'Pairing code must be 6 digits' });
         }
         const vaultId = body.vaultId || ('vault_' + Math.random().toString(36).substring(2, 10));
+        const checkDigits = body.checkDigits || String(Math.floor(100 + Math.random() * 900));
         pairings.set(rawCode, {
           code: rawCode,
+          checkDigits,
           hostDeviceId: body.deviceId || 'host',
           state: body.state,
           vaultId,
+          status: 'waiting_guest',
           createdAt: Date.now(),
           expiresAt: Date.now() + 10 * 60 * 1000,
           paired: false
@@ -101,12 +106,12 @@ function localSyncPlugin(): Plugin {
           vaults.set(vaultId, { state: body.state, updatedAt: Date.now() });
           persistDisk();
         }
-        sendJson(200, { success: true, code: rawCode, vaultId });
+        sendJson(200, { success: true, code: rawCode, checkDigits, vaultId });
       });
       return;
     }
 
-    // 2. Host polls pairing status
+    // 2. Poll pairing status
     if (url.pathname === '/api/sync/pair/status' && req.method === 'GET') {
       const code = String(url.searchParams.get('code') || '').replace(/\s+/g, '');
       const session = pairings.get(code);
@@ -115,7 +120,9 @@ function localSyncPlugin(): Plugin {
       }
       sendJson(200, {
         success: true,
-        paired: session.paired,
+        status: session.status || (session.paired ? 'approved' : 'waiting_guest'),
+        paired: session.status === 'approved' || !!session.paired,
+        checkDigits: session.checkDigits,
         guestDeviceId: session.guestDeviceId,
         vaultId: session.vaultId
       });
@@ -134,18 +141,40 @@ function localSyncPlugin(): Plugin {
           pairings.delete(rawCode);
           return sendJson(410, { success: false, error: 'Pairing code has expired.' });
         }
-        session.paired = true;
+        session.status = 'waiting_approval';
         session.guestDeviceId = body.deviceId || 'guest';
         
-        if (session.state) {
-          vaults.set(session.vaultId, { state: session.state, updatedAt: Date.now() });
-          persistDisk();
-        }
-        const vaultData = vaults.get(session.vaultId);
         sendJson(200, {
           success: true,
+          status: 'waiting_approval',
+          checkDigits: session.checkDigits,
+          vaultId: session.vaultId
+        });
+      });
+      return;
+    }
+
+    // 3b. Host approves guest device
+    if (url.pathname === '/api/sync/pair/approve' && req.method === 'POST') {
+      readBody().then(body => {
+        const rawCode = String(body.code || '').replace(/\s+/g, '');
+        const session = pairings.get(rawCode);
+        if (!session) {
+          return sendJson(404, { success: false, error: 'Pairing session not found or expired.' });
+        }
+        session.status = 'approved';
+        session.paired = true;
+        const timestamp = Date.now();
+        if (body.state) {
+          session.state = body.state;
+          vaults.set(session.vaultId, { state: body.state, updatedAt: timestamp });
+          persistDisk();
+        }
+        sendJson(200, {
+          success: true,
+          status: 'approved',
           vaultId: session.vaultId,
-          state: vaultData ? vaultData.state : session.state
+          updatedAt: timestamp
         });
       });
       return;

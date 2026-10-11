@@ -1893,25 +1893,71 @@
   <!-- MODAL: CONNECT ANOTHER DEVICE -->
   <dialog id="modal-device-pair" class="planner-modal modal-device-dialog">
     <div class="modal-device-container">
-      <div class="modal-device-header">
-        <span class="card-eyebrow" style="margin-bottom: 0;">CONNECT ANOTHER DEVICE</span>
-        <button type="button" class="modal-close-btn" data-close-modal="modal-device-pair">&times;</button>
+      <!-- Step 1: Code display (Host) -->
+      <div id="pair-step-code">
+        <div class="modal-device-header">
+          <span class="card-eyebrow" style="margin-bottom: 0;">CONNECT ANOTHER DEVICE</span>
+          <button type="button" class="modal-close-btn" data-close-modal="modal-device-pair">&times;</button>
+        </div>
+        <h2 class="modal-device-heading">Enter this code on your other device.</h2>
+        
+        <div class="device-code-display" id="device-pairing-code-display" aria-label="Connection code">553 699</div>
+
+        <p class="device-instructions">
+          Open this planner on the other device, choose <strong>I already use this planner</strong>, and enter the code. It expires in <span id="device-code-countdown">10 minutes</span>.
+        </p>
+
+        <div class="device-waiting-row">
+          <span class="device-spin-icon"></span>
+          <span class="device-waiting-text" id="device-waiting-label">Waiting for the other device&hellip;</span>
+        </div>
+
+        <div class="device-dialog-actions">
+          <button type="button" class="btn btn-ghost" data-close-modal="modal-device-pair">Cancel</button>
+        </div>
       </div>
-      <h2 class="modal-device-heading">Enter this code on your other device.</h2>
-      
-      <div class="device-code-display" id="device-pairing-code-display" aria-label="Connection code">553 699</div>
 
-      <p class="device-instructions">
-        Open this planner on the other device, choose <strong>I already use this planner</strong>, and enter the code. It expires in <span id="device-code-countdown">10 minutes</span>.
-      </p>
+      <!-- Step 2 (Panel 3): One Last Check (Host Approval) -->
+      <div id="pair-step-check" style="display: none;">
+        <div class="modal-device-header">
+          <span class="card-eyebrow" style="margin-bottom: 0;">ONE LAST CHECK</span>
+          <button type="button" class="modal-close-btn" data-close-modal="modal-device-pair">&times;</button>
+        </div>
+        <h2 class="modal-device-heading">Allow the other device?</h2>
 
-      <div class="device-waiting-row">
-        <span class="device-spin-icon"></span>
-        <span class="device-waiting-text" id="device-waiting-label">Waiting for the other device&hellip;</span>
+        <p class="device-instructions" style="text-align: center; margin-bottom: 8px;">
+          Both screens should show this same check number:
+        </p>
+
+        <div class="device-badge-wrap">
+          <div class="device-check-badge" id="host-check-number-display">622</div>
+        </div>
+
+        <p class="device-instructions" style="font-size: 0.85rem; color: var(--text-muted); text-align: center; margin-top: 4px;">
+          If they match, it is safe to connect.
+        </p>
+
+        <div class="device-dialog-actions" style="margin-top: 22px; display: flex; flex-direction: column; gap: 8px;">
+          <button type="button" class="btn btn-primary" id="btn-host-allow-device" style="width: 100%; padding: 12px;">Allow this device</button>
+          <button type="button" class="btn btn-ghost" data-close-modal="modal-device-pair" style="width: 100%;">Cancel</button>
+        </div>
       </div>
 
-      <div class="device-dialog-actions">
-        <button type="button" class="btn btn-ghost" data-close-modal="modal-device-pair">Cancel</button>
+      <!-- Step 3 (Panel 4): Connected (Host Done) -->
+      <div id="pair-step-done" style="display: none;">
+        <div class="modal-device-header">
+          <span class="card-eyebrow" style="margin-bottom: 0;">CONNECTED</span>
+          <button type="button" class="modal-close-btn" data-close-modal="modal-device-pair">&times;</button>
+        </div>
+        <h2 class="modal-device-heading">The other device is ready.</h2>
+
+        <p class="device-instructions">
+          Your encrypted planner will now stay up to date on both devices.
+        </p>
+
+        <div class="device-dialog-actions" style="margin-top: 22px;">
+          <button type="button" class="btn btn-primary" data-close-modal="modal-device-pair" style="width: 100%;">Done</button>
+        </div>
       </div>
     </div>
   </dialog>
@@ -1919,25 +1965,71 @@
   <!-- MODAL: I ALREADY USE THIS PLANNER (JOIN / ENTER CODE) -->
   <dialog id="modal-device-join" class="planner-modal modal-device-dialog">
     <div class="modal-device-container">
-      <div class="modal-device-header">
-        <span class="card-eyebrow" style="margin-bottom: 0;">CONNECT THIS DEVICE</span>
-        <button type="button" class="modal-close-btn" data-close-modal="modal-device-join">&times;</button>
+      <!-- Step 1: Input Code (Guest) -->
+      <div id="join-step-input">
+        <div class="modal-device-header">
+          <span class="card-eyebrow" style="margin-bottom: 0;">CONNECT THIS DEVICE</span>
+          <button type="button" class="modal-close-btn" data-close-modal="modal-device-join">&times;</button>
+        </div>
+        <h2 class="modal-device-heading">Enter the code from your other device.</h2>
+        
+        <p class="device-instructions" style="margin-bottom: 16px;">
+          Open <strong>Settings &rarr; Connect another device</strong> on your phone or computer, and enter the 6-digit code shown on that screen:
+        </p>
+
+        <div class="device-input-box-wrap">
+          <input type="text" id="input-sync-pair-code" class="device-code-input" placeholder="553 699" maxlength="7" autocomplete="off" spellcheck="false" inputmode="numeric">
+        </div>
+
+        <div id="device-join-feedback" class="device-join-feedback" style="display: none;"></div>
+
+        <div class="device-dialog-actions" style="margin-top: 22px;">
+          <button type="button" class="btn btn-ghost" data-close-modal="modal-device-join">Cancel</button>
+          <button type="button" class="btn btn-primary" id="btn-submit-pair-code">Connect this device</button>
+        </div>
       </div>
-      <h2 class="modal-device-heading">Enter the code from your other device.</h2>
-      
-      <p class="device-instructions" style="margin-bottom: 16px;">
-        Open <strong>Settings &rarr; Connect another device</strong> on your phone or computer, and enter the 6-digit code shown on that screen:
-      </p>
 
-      <div class="device-input-box-wrap">
-        <input type="text" id="input-sync-pair-code" class="device-code-input" placeholder="553 699" maxlength="7" autocomplete="off" spellcheck="false" inputmode="numeric">
+      <!-- Step 2 (Panel 2): Almost Connected (Guest Waiting Approval) -->
+      <div id="join-step-verify" style="display: none;">
+        <div class="modal-device-header">
+          <span class="card-eyebrow" style="margin-bottom: 0;">ALMOST CONNECTED</span>
+          <button type="button" class="modal-close-btn" data-close-modal="modal-device-join">&times;</button>
+        </div>
+        <h2 class="modal-device-heading">Approve this on your other device.</h2>
+
+        <p class="device-instructions" style="text-align: center; margin-bottom: 8px;">
+          Make sure both screens show:
+        </p>
+
+        <div class="device-badge-wrap">
+          <div class="device-check-badge" id="guest-check-number-display">622</div>
+        </div>
+
+        <div class="device-waiting-row" style="justify-content: center;">
+          <span class="device-spin-icon"></span>
+          <span class="device-waiting-text" id="guest-waiting-label">Waiting for approval&hellip;</span>
+        </div>
+
+        <div class="device-dialog-actions" style="margin-top: 22px;">
+          <button type="button" class="btn btn-ghost" data-close-modal="modal-device-join" style="width: 100%;">Cancel</button>
+        </div>
       </div>
 
-      <div id="device-join-feedback" class="device-join-feedback" style="display: none;"></div>
+      <!-- Step 3 (Panel 5): Connected (Guest Done) -->
+      <div id="join-step-done" style="display: none;">
+        <div class="modal-device-header">
+          <span class="card-eyebrow" style="margin-bottom: 0;">CONNECTED</span>
+          <button type="button" class="modal-close-btn" data-close-modal="modal-device-join">&times;</button>
+        </div>
+        <h2 class="modal-device-heading">Your planner is ready here too.</h2>
 
-      <div class="device-dialog-actions" style="margin-top: 22px;">
-        <button type="button" class="btn btn-ghost" data-close-modal="modal-device-join">Cancel</button>
-        <button type="button" class="btn btn-primary" id="btn-submit-pair-code">Connect this device</button>
+        <p class="device-instructions">
+          Your information is now on this device. Future changes will update automatically.
+        </p>
+
+        <div class="device-dialog-actions" style="margin-top: 22px;">
+          <button type="button" class="btn btn-primary" data-close-modal="modal-device-join" style="width: 100%;">Done</button>
+        </div>
       </div>
     </div>
   </dialog>

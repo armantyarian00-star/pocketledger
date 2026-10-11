@@ -25,7 +25,7 @@ export default {
         'Access-Control-Allow-Origin': '*',
       };
 
-      // A. Create Pairing
+      // A. Create Pairing (Step 1 - Host Device)
       if (url.pathname === '/api/sync/pair/create' && request.method === 'POST') {
         const body = await request.json().catch(() => ({}));
         const rawCode = String(body.code || '').replace(/\s+/g, '');
@@ -36,11 +36,15 @@ export default {
           });
         }
         const vaultId = body.vaultId || ('vault_' + Math.random().toString(36).substring(2, 10));
+        // Generate 3-digit check number (SAS)
+        const checkDigits = body.checkDigits || String(Math.floor(100 + Math.random() * 900));
         const session = {
           code: rawCode,
+          checkDigits,
           hostDeviceId: body.deviceId || 'host',
           state: body.state,
           vaultId,
+          status: 'waiting_guest', // waiting_guest -> waiting_approval -> approved
           createdAt: Date.now(),
           expiresAt: Date.now() + 10 * 60 * 1000,
           paired: false,
@@ -58,13 +62,13 @@ export default {
           }
         }
 
-        return new Response(JSON.stringify({ success: true, code: rawCode, vaultId }), {
+        return new Response(JSON.stringify({ success: true, code: rawCode, checkDigits, vaultId }), {
           status: 200,
           headers: corsHeaders,
         });
       }
 
-      // B. Pair Status
+      // B. Pair Status (Polled by both Host and Guest)
       if (url.pathname === '/api/sync/pair/status' && request.method === 'GET') {
         const code = String(url.searchParams.get('code') || '').replace(/\s+/g, '');
         let session;
@@ -83,7 +87,9 @@ export default {
         }
         return new Response(JSON.stringify({
           success: true,
-          paired: !!session.paired,
+          status: session.status || (session.paired ? 'approved' : 'waiting_guest'),
+          paired: session.status === 'approved' || !!session.paired,
+          checkDigits: session.checkDigits,
           guestDeviceId: session.guestDeviceId,
           vaultId: session.vaultId,
         }), {
@@ -92,7 +98,7 @@ export default {
         });
       }
 
-      // C. Pair Join
+      // C. Pair Join (Step 2 - Guest Device submits 6-digit code)
       if (url.pathname === '/api/sync/pair/join' && request.method === 'POST') {
         const body = await request.json().catch(() => ({}));
         const rawCode = String(body.code || '').replace(/\s+/g, '');
@@ -119,39 +125,73 @@ export default {
           });
         }
 
-        session.paired = true;
+        // Set state to waiting_approval
+        session.status = 'waiting_approval';
         session.guestDeviceId = body.deviceId || 'guest';
 
-        let returnState = session.state;
         if (env.SYNC_KV) {
           await env.SYNC_KV.put(`pair:${rawCode}`, JSON.stringify(session), { expirationTtl: 600 });
-          if (session.state) {
-            await env.SYNC_KV.put(`vault:${session.vaultId}`, JSON.stringify({ state: session.state, updatedAt: Date.now() }));
-          }
-          const vVal = await env.SYNC_KV.get(`vault:${session.vaultId}`);
-          if (vVal) {
-            const vData = JSON.parse(vVal);
-            returnState = vData.state;
-          }
-        } else {
-          if (session.state) {
-            vaults.set(session.vaultId, { state: session.state, updatedAt: Date.now() });
-          }
-          const vaultData = vaults.get(session.vaultId);
-          if (vaultData) returnState = vaultData.state;
         }
 
         return new Response(JSON.stringify({
           success: true,
+          status: 'waiting_approval',
+          checkDigits: session.checkDigits,
           vaultId: session.vaultId,
-          state: returnState,
         }), {
           status: 200,
           headers: corsHeaders,
         });
       }
 
-      // D. Vault GET
+      // D. Pair Approve (Step 3 - Host Device allows the other device)
+      if (url.pathname === '/api/sync/pair/approve' && request.method === 'POST') {
+        const body = await request.json().catch(() => ({}));
+        const rawCode = String(body.code || '').replace(/\s+/g, '');
+        let session;
+        if (env.SYNC_KV) {
+          const val = await env.SYNC_KV.get(`pair:${rawCode}`);
+          session = val ? JSON.parse(val) : null;
+        } else {
+          session = pairings.get(rawCode);
+        }
+
+        if (!session) {
+          return new Response(JSON.stringify({ success: false, error: 'Pairing session not found or expired.' }), {
+            status: 404,
+            headers: corsHeaders,
+          });
+        }
+
+        session.status = 'approved';
+        session.paired = true;
+
+        const timestamp = Date.now();
+        if (body.state) {
+          session.state = body.state;
+          if (env.SYNC_KV) {
+            await env.SYNC_KV.put(`vault:${session.vaultId}`, JSON.stringify({ state: body.state, updatedAt: timestamp }));
+          } else {
+            vaults.set(session.vaultId, { state: body.state, updatedAt: timestamp });
+          }
+        }
+
+        if (env.SYNC_KV) {
+          await env.SYNC_KV.put(`pair:${rawCode}`, JSON.stringify(session), { expirationTtl: 600 });
+        }
+
+        return new Response(JSON.stringify({
+          success: true,
+          status: 'approved',
+          vaultId: session.vaultId,
+          updatedAt: timestamp,
+        }), {
+          status: 200,
+          headers: corsHeaders,
+        });
+      }
+
+      // E. Vault GET (Fetch latest state)
       if (url.pathname === '/api/sync/vault' && request.method === 'GET') {
         const vaultId = url.searchParams.get('id');
         let vaultData;
@@ -174,7 +214,7 @@ export default {
         });
       }
 
-      // E. Vault POST
+      // F. Vault POST (Push updated state)
       if (url.pathname === '/api/sync/vault' && request.method === 'POST') {
         const body = await request.json().catch(() => ({}));
         const vaultId = url.searchParams.get('id') || body.vaultId;
@@ -184,19 +224,20 @@ export default {
             headers: corsHeaders,
           });
         }
-        const vaultData = { state: body.state, updatedAt: Date.now() };
+        const timestamp = Date.now();
+        const vaultData = { state: body.state, updatedAt: timestamp };
         if (env.SYNC_KV) {
           await env.SYNC_KV.put(`vault:${vaultId}`, JSON.stringify(vaultData));
         } else {
           vaults.set(vaultId, vaultData);
         }
-        return new Response(JSON.stringify({ success: true, updatedAt: Date.now() }), {
+        return new Response(JSON.stringify({ success: true, updatedAt: timestamp }), {
           status: 200,
           headers: corsHeaders,
         });
       }
 
-      // F. Vault DELETE
+      // G. Vault DELETE
       if (url.pathname === '/api/sync/vault' && request.method === 'DELETE') {
         const vaultId = url.searchParams.get('id');
         if (vaultId) {

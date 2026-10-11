@@ -91,45 +91,73 @@ applyTheme(state.theme);
 // File System Access API Desktop Auto-Save Handle
 let autoSaveHandle: any = null;
 let syncPushTimer: ReturnType<typeof setTimeout> | null = null;
+let isSyncPulling = false;
 
 function syncPushDebounced() {
   if (!state.sync?.isSynced || !state.sync?.vaultId) return;
   if (syncPushTimer) clearTimeout(syncPushTimer);
-  syncPushTimer = setTimeout(() => {
-    fetch(`/api/sync/vault?id=${state.sync!.vaultId}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ vaultId: state.sync!.vaultId, state })
-    }).catch(() => {});
-  }, 1000);
+  syncPushTimer = setTimeout(async () => {
+    try {
+      const res = await fetch(`/api/sync/vault?id=${state.sync!.vaultId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ vaultId: state.sync!.vaultId, state })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.updatedAt && state.sync) {
+          state.sync.lastSyncedAt = data.updatedAt;
+          saveState(state);
+        }
+      }
+    } catch {
+      // quiet
+    }
+  }, 400);
 }
 
 async function pullSyncVaultSilent() {
+  if (isSyncPulling) return;
   if (!state.sync?.isSynced || !state.sync?.vaultId) return;
   try {
+    isSyncPulling = true;
     const res = await fetch(`/api/sync/vault?id=${state.sync.vaultId}`);
     if (!res.ok) return;
     const data = await res.json();
-    if (data.success && data.state && data.updatedAt && (!state.sync.lastSyncedAt || data.updatedAt > state.sync.lastSyncedAt)) {
-      const currentVaultId = state.sync.vaultId;
-      const currentDeviceId = state.sync.deviceId;
-      Object.assign(state, data.state);
-      state.sync = {
-        ...(state.sync || {}),
-        isSynced: true,
-        syncStatus: 'synced',
-        lastSyncedAt: data.updatedAt,
-        vaultId: currentVaultId,
-        deviceId: currentDeviceId
-      };
-      saveState(state);
-      renderAll();
-      renderSyncSettings();
+    if (data.success && data.state && data.updatedAt) {
+      const lastLocal = state.sync.lastSyncedAt || 0;
+      if (data.updatedAt > lastLocal) {
+        const currentVaultId = state.sync.vaultId;
+        const currentDeviceId = state.sync.deviceId;
+        const currentPairingCode = state.sync.pairingCode;
+        Object.assign(state, data.state);
+        state.sync = {
+          ...(data.state.sync || {}),
+          isSynced: true,
+          syncStatus: 'synced',
+          lastSyncedAt: data.updatedAt,
+          vaultId: currentVaultId,
+          deviceId: currentDeviceId,
+          pairingCode: currentPairingCode
+        };
+        saveState(state);
+        renderAll();
+        renderSyncSettings();
+      }
     }
   } catch {
     // quiet
+  } finally {
+    isSyncPulling = false;
   }
 }
+
+// Continuous background sync polling every 3.5 seconds
+setInterval(() => {
+  if (state.sync?.isSynced && state.sync?.vaultId) {
+    pullSyncVaultSilent();
+  }
+}, 3500);
 
 window.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
@@ -704,31 +732,59 @@ function closeHowItWorksModal() {
   modalHowItWorks.close();
 }
 
+let currentActivePairCode = '';
+let joinPollInterval: ReturnType<typeof setInterval> | null = null;
+
+function resetPairModalViews() {
+  const stepCode = document.getElementById('pair-step-code');
+  const stepCheck = document.getElementById('pair-step-check');
+  const stepDone = document.getElementById('pair-step-done');
+  if (stepCode) stepCode.style.display = 'block';
+  if (stepCheck) stepCheck.style.display = 'none';
+  if (stepDone) stepDone.style.display = 'none';
+}
+
 function openDevicePairModal() {
   ensureSyncState();
+  resetPairModalViews();
+
   const code1 = Math.floor(100 + Math.random() * 900);
   const code2 = Math.floor(100 + Math.random() * 900);
-  state.sync!.pairingCode = `${code1} ${code2}`;
+  const formattedCode = `${code1} ${code2}`;
+  const cleanCode = `${code1}${code2}`;
+  currentActivePairCode = cleanCode;
+
+  // Generate 3-digit verification number (SAS)
+  const checkDigits = String(Math.floor(100 + Math.random() * 900));
+
+  state.sync!.pairingCode = formattedCode;
   state.sync!.pairingExpiresAt = Date.now() + 10 * 60 * 1000;
+  if (!state.sync!.vaultId) {
+    state.sync!.vaultId = 'vault_' + Math.random().toString(36).substring(2, 10);
+  }
   persistState();
 
   const display = document.getElementById('device-pairing-code-display');
-  if (display) display.textContent = state.sync!.pairingCode;
+  if (display) display.textContent = formattedCode;
 
   const timerEl = document.getElementById('device-code-countdown');
   if (timerEl) timerEl.textContent = '10 minutes';
+
+  const hostCheckDisplay = document.getElementById('host-check-number-display');
+  if (hostCheckDisplay) hostCheckDisplay.textContent = checkDigits;
 
   const waitingLabel = document.getElementById('device-waiting-label');
   if (waitingLabel) {
     waitingLabel.innerHTML = 'Waiting for the other device&hellip;';
   }
 
-  const cleanCode = state.sync!.pairingCode.replace(/\s+/g, '');
+  // Register session with Cloudflare Workers KV
   fetch('/api/sync/pair/create', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       code: cleanCode,
+      checkDigits,
       deviceId: state.sync!.deviceId,
       vaultId: state.sync!.vaultId,
       state: state
@@ -755,7 +811,24 @@ function openDevicePairModal() {
       const res = await fetch(`/api/sync/pair/status?code=${cleanCode}`);
       if (!res.ok) return;
       const data = await res.json();
-      if (data.paired) {
+
+      // Step 2 -> Step 3: Guest joined, waiting approval -> Show "ONE LAST CHECK"
+      if (data.status === 'waiting_approval' || (data.guestDeviceId && !data.paired)) {
+        const stepCode = document.getElementById('pair-step-code');
+        const stepCheck = document.getElementById('pair-step-check');
+        if (stepCode && stepCode.style.display !== 'none') {
+          stepCode.style.display = 'none';
+        }
+        if (stepCheck && stepCheck.style.display !== 'block') {
+          stepCheck.style.display = 'block';
+        }
+        if (data.checkDigits && hostCheckDisplay) {
+          hostCheckDisplay.textContent = data.checkDigits;
+        }
+      }
+
+      // Step 4: Approved -> Show "CONNECTED"
+      if (data.status === 'approved' || data.paired) {
         if (pairPollInterval) {
           clearInterval(pairPollInterval);
           pairPollInterval = null;
@@ -770,15 +843,14 @@ function openDevicePairModal() {
         if (data.vaultId) state.sync!.vaultId = data.vaultId;
         persistState();
 
-        const waitEl = document.getElementById('device-waiting-label');
-        if (waitEl) {
-          waitEl.innerHTML = '<strong style="color:var(--success, #10b981);">&#10003; Connected with other device!</strong>';
-        }
-        setTimeout(() => {
-          closeDevicePairModal();
-          renderSyncSettings();
-          showUndoToast('✓ Connected and synced with your other device!');
-        }, 1200);
+        const stepCheck = document.getElementById('pair-step-check');
+        const stepCode = document.getElementById('pair-step-code');
+        const stepDone = document.getElementById('pair-step-done');
+        if (stepCode) stepCode.style.display = 'none';
+        if (stepCheck) stepCheck.style.display = 'none';
+        if (stepDone) stepDone.style.display = 'block';
+
+        renderSyncSettings();
       }
     } catch {
       // quiet
@@ -800,8 +872,22 @@ function closeDevicePairModal() {
   modalDevicePair?.close();
 }
 
+function resetJoinModalViews() {
+  const stepInput = document.getElementById('join-step-input');
+  const stepVerify = document.getElementById('join-step-verify');
+  const stepDone = document.getElementById('join-step-done');
+  if (stepInput) stepInput.style.display = 'block';
+  if (stepVerify) stepVerify.style.display = 'none';
+  if (stepDone) stepDone.style.display = 'none';
+}
+
 function openDeviceJoinModal() {
   ensureSyncState();
+  resetJoinModalViews();
+  if (joinPollInterval) {
+    clearInterval(joinPollInterval);
+    joinPollInterval = null;
+  }
   const input = document.getElementById('input-sync-pair-code') as HTMLInputElement | null;
   const feedback = document.getElementById('device-join-feedback');
   if (input) input.value = '';
@@ -815,6 +901,10 @@ function openDeviceJoinModal() {
 }
 
 function closeDeviceJoinModal() {
+  if (joinPollInterval) {
+    clearInterval(joinPollInterval);
+    joinPollInterval = null;
+  }
   modalDeviceJoin?.close();
 }
 
@@ -3462,7 +3552,58 @@ inputSyncPairCode?.addEventListener('input', () => {
   }
 });
 
-// Submit Join Pairing Code
+// Host clicks "Allow this device"
+document.getElementById('btn-host-allow-device')?.addEventListener('click', async () => {
+  const btn = document.getElementById('btn-host-allow-device') as HTMLButtonElement | null;
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Allowing\u2026';
+  }
+
+  try {
+    const res = await fetch('/api/sync/pair/approve', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        code: currentActivePairCode,
+        state: state
+      })
+    });
+    const data = await res.json();
+    if (res.ok && data.success) {
+      if (pairPollInterval) {
+        clearInterval(pairPollInterval);
+        pairPollInterval = null;
+      }
+      if (pairCountdownTimer) {
+        clearInterval(pairCountdownTimer);
+        pairCountdownTimer = null;
+      }
+
+      state.sync!.isSynced = true;
+      state.sync!.syncStatus = 'synced';
+      state.sync!.lastSyncedAt = data.updatedAt || Date.now();
+      if (data.vaultId) state.sync!.vaultId = data.vaultId;
+      persistState();
+
+      const stepCheck = document.getElementById('pair-step-check');
+      const stepDone = document.getElementById('pair-step-done');
+      if (stepCheck) stepCheck.style.display = 'none';
+      if (stepDone) stepDone.style.display = 'block';
+
+      renderSyncSettings();
+    }
+  } catch (err) {
+    console.warn('Could not approve device pairing:', err);
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = 'Allow this device';
+    }
+  }
+});
+
+// Submit Join Pairing Code (Guest)
 document.getElementById('btn-submit-pair-code')?.addEventListener('click', async () => {
   const input = document.getElementById('input-sync-pair-code') as HTMLInputElement | null;
   const feedback = document.getElementById('device-join-feedback');
@@ -3506,49 +3647,82 @@ document.getElementById('btn-submit-pair-code')?.addEventListener('click', async
       return;
     }
 
-    if (feedback) {
-      feedback.style.display = 'block';
-      feedback.className = 'device-join-feedback success';
-      feedback.textContent = '\u2713 Connected! Synchronizing planner data\u2026';
+    // Step 2 (Panel 2): ALMOST CONNECTED - show check digits & wait for approval
+    const stepInput = document.getElementById('join-step-input');
+    const stepVerify = document.getElementById('join-step-verify');
+    const guestCheckDisplay = document.getElementById('guest-check-number-display');
+    if (stepInput) stepInput.style.display = 'none';
+    if (stepVerify) stepVerify.style.display = 'block';
+    if (guestCheckDisplay && data.checkDigits) {
+      guestCheckDisplay.textContent = data.checkDigits;
     }
 
-    if (data.state) {
-      const syncedState: LedgerState = {
-        ...data.state,
-        sync: {
-          ...data.state.sync,
-          isSynced: true,
-          syncStatus: 'synced',
-          lastSyncedAt: Date.now(),
-          vaultId: data.vaultId || data.state.sync?.vaultId,
-          pairingCode: raw,
-          deviceId: guestDeviceId
+    // Start polling status until host approves
+    if (joinPollInterval) clearInterval(joinPollInterval);
+    joinPollInterval = setInterval(async () => {
+      try {
+        const statusRes = await fetch(`/api/sync/pair/status?code=${raw}`);
+        if (!statusRes.ok) return;
+        const statusData = await statusRes.json();
+
+        if (statusData.status === 'approved' || statusData.paired) {
+          if (joinPollInterval) {
+            clearInterval(joinPollInterval);
+            joinPollInterval = null;
+          }
+
+          // Fetch the synced vault state from host
+          const targetVaultId = statusData.vaultId || data.vaultId;
+          if (targetVaultId) {
+            const vaultRes = await fetch(`/api/sync/vault?id=${targetVaultId}`);
+            if (vaultRes.ok) {
+              const vaultJson = await vaultRes.json();
+              if (vaultJson.success && vaultJson.state) {
+                const syncedState: LedgerState = {
+                  ...vaultJson.state,
+                  sync: {
+                    ...(vaultJson.state.sync || {}),
+                    isSynced: true,
+                    syncStatus: 'synced',
+                    lastSyncedAt: vaultJson.updatedAt || Date.now(),
+                    vaultId: targetVaultId,
+                    pairingCode: raw,
+                    deviceId: guestDeviceId
+                  }
+                };
+                Object.assign(state, syncedState);
+                saveState(state);
+              }
+            }
+          }
+
+          state.sync!.isSynced = true;
+          state.sync!.syncStatus = 'synced';
+          state.sync!.lastSyncedAt = Date.now();
+          if (targetVaultId) state.sync!.vaultId = targetVaultId;
+          state.sync!.pairingCode = raw;
+          persistState();
+
+          // Step 3 (Panel 5): CONNECTED (Guest Done)
+          const stepDone = document.getElementById('join-step-done');
+          if (stepVerify) stepVerify.style.display = 'none';
+          if (stepDone) stepDone.style.display = 'block';
+
+          renderAll();
+          renderSyncSettings();
         }
-      };
-      Object.assign(state, syncedState);
-      saveState(state);
-    } else {
-      state.sync!.isSynced = true;
-      state.sync!.syncStatus = 'synced';
-      state.sync!.lastSyncedAt = Date.now();
-      state.sync!.vaultId = data.vaultId;
-      state.sync!.pairingCode = raw;
-      persistState();
-    }
+      } catch {
+        // quiet
+      }
+    }, 1200);
 
-    setTimeout(() => {
-      closeDeviceJoinModal();
-      if (btn) btn.disabled = false;
-      renderAll();
-      renderSyncSettings();
-      showUndoToast('✓ Device connected and synchronized!');
-    }, 900);
   } catch (err: any) {
     if (feedback) {
       feedback.style.display = 'block';
       feedback.className = 'device-join-feedback error';
-      feedback.textContent = 'Could not reach sync service. Make sure both browsers are on http://localhost:4173/';
+      feedback.textContent = 'Could not reach sync service. Check internet connection and try again.';
     }
+  } finally {
     if (btn) btn.disabled = false;
   }
 });
@@ -3855,6 +4029,9 @@ document.getElementById('btn-print-guide')?.addEventListener('click', () => {
 
 // Initial render
 renderAll();
+if (state.sync?.isSynced && state.sync?.vaultId) {
+  pullSyncVaultSilent();
+}
 
 if (window.location.hash === '#modal' || window.location.search.includes('modal=1')) {
   setTimeout(() => openLogSpendModal(), 60);

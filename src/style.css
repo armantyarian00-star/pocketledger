@@ -2969,6 +2969,27 @@ html.theme-dark .sync-check-icon {
   user-select: all;
 }
 
+.device-badge-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 14px 0;
+}
+
+.device-check-badge {
+  display: inline-block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  padding: 10px 32px;
+  border-radius: 9999px;
+  text-align: center;
+}
+
 .device-instructions {
   font-size: 0.9rem;
   color: var(--text-main);
