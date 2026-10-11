@@ -1,4 +1,4 @@
-// Cloudflare Worker for PocketLedger (Static Assets + Sync API Relay)
+// Cloudflare Worker for PocketLedger (Static Assets + Global Sync KV Relay)
 const pairings = new Map();
 const vaults = new Map();
 
@@ -45,10 +45,19 @@ export default {
           expiresAt: Date.now() + 10 * 60 * 1000,
           paired: false,
         };
-        pairings.set(rawCode, session);
-        if (body.state) {
-          vaults.set(vaultId, { state: body.state, updatedAt: Date.now() });
+
+        if (env.SYNC_KV) {
+          await env.SYNC_KV.put(`pair:${rawCode}`, JSON.stringify(session), { expirationTtl: 600 });
+          if (body.state) {
+            await env.SYNC_KV.put(`vault:${vaultId}`, JSON.stringify({ state: body.state, updatedAt: Date.now() }));
+          }
+        } else {
+          pairings.set(rawCode, session);
+          if (body.state) {
+            vaults.set(vaultId, { state: body.state, updatedAt: Date.now() });
+          }
         }
+
         return new Response(JSON.stringify({ success: true, code: rawCode, vaultId }), {
           status: 200,
           headers: corsHeaders,
@@ -58,7 +67,14 @@ export default {
       // B. Pair Status
       if (url.pathname === '/api/sync/pair/status' && request.method === 'GET') {
         const code = String(url.searchParams.get('code') || '').replace(/\s+/g, '');
-        const session = pairings.get(code);
+        let session;
+        if (env.SYNC_KV) {
+          const val = await env.SYNC_KV.get(`pair:${code}`);
+          session = val ? JSON.parse(val) : null;
+        } else {
+          session = pairings.get(code);
+        }
+
         if (!session) {
           return new Response(JSON.stringify({ success: false, error: 'Pairing session expired or not found' }), {
             status: 404,
@@ -67,7 +83,7 @@ export default {
         }
         return new Response(JSON.stringify({
           success: true,
-          paired: session.paired,
+          paired: !!session.paired,
           guestDeviceId: session.guestDeviceId,
           vaultId: session.vaultId,
         }), {
@@ -80,7 +96,14 @@ export default {
       if (url.pathname === '/api/sync/pair/join' && request.method === 'POST') {
         const body = await request.json().catch(() => ({}));
         const rawCode = String(body.code || '').replace(/\s+/g, '');
-        const session = pairings.get(rawCode);
+        let session;
+        if (env.SYNC_KV) {
+          const val = await env.SYNC_KV.get(`pair:${rawCode}`);
+          session = val ? JSON.parse(val) : null;
+        } else {
+          session = pairings.get(rawCode);
+        }
+
         if (!session) {
           return new Response(JSON.stringify({ success: false, error: 'Pairing code not found or expired.' }), {
             status: 404,
@@ -88,22 +111,40 @@ export default {
           });
         }
         if (Date.now() > session.expiresAt) {
-          pairings.delete(rawCode);
+          if (env.SYNC_KV) await env.SYNC_KV.delete(`pair:${rawCode}`);
+          else pairings.delete(rawCode);
           return new Response(JSON.stringify({ success: false, error: 'Pairing code has expired.' }), {
             status: 410,
             headers: corsHeaders,
           });
         }
+
         session.paired = true;
         session.guestDeviceId = body.deviceId || 'guest';
-        if (session.state) {
-          vaults.set(session.vaultId, { state: session.state, updatedAt: Date.now() });
+
+        let returnState = session.state;
+        if (env.SYNC_KV) {
+          await env.SYNC_KV.put(`pair:${rawCode}`, JSON.stringify(session), { expirationTtl: 600 });
+          if (session.state) {
+            await env.SYNC_KV.put(`vault:${session.vaultId}`, JSON.stringify({ state: session.state, updatedAt: Date.now() }));
+          }
+          const vVal = await env.SYNC_KV.get(`vault:${session.vaultId}`);
+          if (vVal) {
+            const vData = JSON.parse(vVal);
+            returnState = vData.state;
+          }
+        } else {
+          if (session.state) {
+            vaults.set(session.vaultId, { state: session.state, updatedAt: Date.now() });
+          }
+          const vaultData = vaults.get(session.vaultId);
+          if (vaultData) returnState = vaultData.state;
         }
-        const vaultData = vaults.get(session.vaultId);
+
         return new Response(JSON.stringify({
           success: true,
           vaultId: session.vaultId,
-          state: vaultData ? vaultData.state : session.state,
+          state: returnState,
         }), {
           status: 200,
           headers: corsHeaders,
@@ -113,14 +154,21 @@ export default {
       // D. Vault GET
       if (url.pathname === '/api/sync/vault' && request.method === 'GET') {
         const vaultId = url.searchParams.get('id');
-        if (!vaultId || !vaults.has(vaultId)) {
+        let vaultData;
+        if (env.SYNC_KV) {
+          const val = await env.SYNC_KV.get(`vault:${vaultId}`);
+          vaultData = val ? JSON.parse(val) : null;
+        } else {
+          vaultData = vaults.get(vaultId);
+        }
+
+        if (!vaultData) {
           return new Response(JSON.stringify({ success: false, error: 'Vault not found' }), {
             status: 404,
             headers: corsHeaders,
           });
         }
-        const data = vaults.get(vaultId);
-        return new Response(JSON.stringify({ success: true, state: data.state, updatedAt: data.updatedAt }), {
+        return new Response(JSON.stringify({ success: true, state: vaultData.state, updatedAt: vaultData.updatedAt }), {
           status: 200,
           headers: corsHeaders,
         });
@@ -136,7 +184,12 @@ export default {
             headers: corsHeaders,
           });
         }
-        vaults.set(vaultId, { state: body.state, updatedAt: Date.now() });
+        const vaultData = { state: body.state, updatedAt: Date.now() };
+        if (env.SYNC_KV) {
+          await env.SYNC_KV.put(`vault:${vaultId}`, JSON.stringify(vaultData));
+        } else {
+          vaults.set(vaultId, vaultData);
+        }
         return new Response(JSON.stringify({ success: true, updatedAt: Date.now() }), {
           status: 200,
           headers: corsHeaders,
@@ -146,8 +199,12 @@ export default {
       // F. Vault DELETE
       if (url.pathname === '/api/sync/vault' && request.method === 'DELETE') {
         const vaultId = url.searchParams.get('id');
-        if (vaultId && vaults.has(vaultId)) {
-          vaults.delete(vaultId);
+        if (vaultId) {
+          if (env.SYNC_KV) {
+            await env.SYNC_KV.delete(`vault:${vaultId}`);
+          } else {
+            vaults.delete(vaultId);
+          }
         }
         return new Response(JSON.stringify({ success: true }), {
           status: 200,

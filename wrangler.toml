@@ -5,6 +5,9 @@ compatibility_date = "2024-09-23"
 [build]
 command = "npm run build"
 
+[[kv_namespaces]]
+binding = "SYNC_KV"
+
 [assets]
 directory = "./dist"
 binding = "ASSETS"
