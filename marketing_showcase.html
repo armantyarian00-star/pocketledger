@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PocketLedger Showcase Wrapper</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 1280px;
+      height: 640px;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 30%, #f7f4fb 0%, #ebe4f3 60%, #ded5e8 100%);
+      font-family: 'Inter', -apple-system, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* Subtle decorative background blur shapes */
+    .bg-shape-1 {
+      position: absolute;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(159, 122, 234, 0.18) 0%, transparent 70%);
+      top: -100px;
+      left: -80px;
+      filter: blur(40px);
+      pointer-events: none;
+    }
+    .bg-shape-2 {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(56, 178, 172, 0.15) 0%, transparent 70%);
+      bottom: -120px;
+      right: -80px;
+      filter: blur(40px);
+      pointer-events: none;
+    }
+
+    /* Left Copy Column */
+    .showcase-left {
+      position: absolute;
+      left: 32px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 195px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      z-index: 10;
+    }
+
+    .badge-pill {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: #3b2563;
+      color: #ffffff;
+      width: fit-content;
+      box-shadow: 0 4px 12px rgba(59, 37, 99, 0.25);
+    }
+
+    .headline {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.35rem;
+      line-height: 1.25;
+      color: #241d33;
+      font-weight: 700;
+    }
+
+    .feature-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      color: #554a66;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .feature-item svg {
+      width: 13px;
+      height: 13px;
+      color: #2e7d32;
+      flex-shrink: 0;
+    }
+
+    /* Right Copy Column */
+    .showcase-right {
+      position: absolute;
+      right: 32px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 195px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      z-index: 10;
+      text-align: left;
+    }
+
+    .badge-pill-right {
+      align-self: flex-start;
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: #3b2563;
+      color: #ffffff;
+      width: fit-content;
+      box-shadow: 0 4px 12px rgba(59, 37, 99, 0.25);
+    }
+
+    .headline-right {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.35rem;
+      line-height: 1.25;
+      color: #241d33;
+      font-weight: 700;
+    }
+
+    .feature-list-right {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-start;
+    }
+
+    .feature-item-right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 6px;
+      font-size: 0.72rem;
+      color: #554a66;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .feature-item-right svg {
+      width: 13px;
+      height: 13px;
+      color: #2e7d32;
+      flex-shrink: 0;
+    }
+
+    /* App Frame Container */
+    .app-frame {
+      width: 790px;
+      height: 564px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 24px 60px rgba(45, 26, 78, 0.22), 0 6px 18px rgba(0, 0, 0, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      z-index: 5;
+    }
+
+    /* Window Titlebar */
+    .window-header {
+      height: 26px;
+      background: #fbfafd;
+      border-bottom: 1px solid rgba(110, 68, 166, 0.12);
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      gap: 7px;
+      flex-shrink: 0;
+    }
+
+    .dot { width: 9px; height: 9px; border-radius: 50%; }
+    .dot.red { background: #ff5f56; }
+    .dot.yellow { background: #ffbd2e; }
+    .dot.green { background: #27c93f; }
+
+    .window-title {
+      font-size: 0.68rem;
+      color: #847a96;
+      margin-left: auto;
+      margin-right: auto;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    /* Iframe Wrapper with slight scale */
+    .iframe-wrapper {
+      width: 100%;
+      height: calc(100% - 26px);
+      overflow: hidden;
+      position: relative;
+      background: #f6f5f9;
+    }
+
+    #app-iframe {
+      width: 960px;
+      height: 660px;
+      border: none;
+      background: #f6f5f9;
+      transform: scale(0.815);
+      transform-origin: 0 0;
+    }
+
+    /* Virtual Mouse Cursor */
+    #virtual-cursor {
+      position: absolute;
+      top: -100px;
+      left: -100px;
+      width: 26px;
+      height: 26px;
+      pointer-events: none;
+      z-index: 999999;
+      transition: none;
+      filter: drop-shadow(0 3px 6px rgba(0,0,0,0.4));
+    }
+
+    #virtual-cursor svg {
+      width: 26px;
+      height: 26px;
+    }
+
+    /* Click Ripple Animation */
+    .click-ripple {
+      position: absolute;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(110, 68, 166, 0.4);
+      border: 2px solid #3b2563;
+      transform: translate(-50%, -50%) scale(0.2);
+      opacity: 1;
+      pointer-events: none;
+      z-index: 999998;
+      animation: rippleAnim 0.4s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+    }
+
+    @keyframes rippleAnim {
+      to {
+        transform: translate(-50%, -50%) scale(1.6);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-shape-1"></div>
+  <div class="bg-shape-2"></div>
+
+  <!-- Left Copy -->
+  <div class="showcase-left">
+    <div class="badge-pill">CALM BUDGET APP</div>
+    <div class="headline">Know what's safe to spend</div>
+    <div class="feature-list">
+      <div class="feature-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>No Account Needed</span>
+      </div>
+      <div class="feature-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>No Subscription</span>
+      </div>
+      <div class="feature-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>Built for Real Life</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Center Mockup Frame -->
+  <div class="app-frame" id="app-frame">
+    <div class="window-header">
+      <div class="dot red"></div>
+      <div class="dot yellow"></div>
+      <div class="dot green"></div>
+      <div class="window-title">PocketLedger &bull; Everyday Money Plan</div>
+      <div style="width: 35px;"></div>
+    </div>
+    <div class="iframe-wrapper">
+      <iframe id="app-iframe" src="http://127.0.0.1:4173/"></iframe>
+    </div>
+  </div>
+
+  <!-- Right Copy -->
+  <div class="showcase-right">
+    <div class="badge-pill-right">100% PRIVATE &amp; OFFLINE</div>
+    <div class="headline-right">Planner, Notes &amp; Cashflow</div>
+    <div class="feature-list-right">
+      <div class="feature-item-right">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>Monthly Notes</span>
+      </div>
+      <div class="feature-item-right">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>Bills Due Timeline</span>
+      </div>
+      <div class="feature-item-right">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>Instant Net Kept</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Virtual Animated Pointer -->
+  <div id="virtual-cursor">
+    <svg viewBox="0 0 24 24" fill="none">
+      <path d="M4 2L20 10L12 13L9 21L4 2Z" fill="#3b2563" stroke="#ffffff" stroke-width="1.8" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <script>
+    window.setCursorPos = (x, y) => {
+      const cur = document.getElementById('virtual-cursor');
+      if (cur) {
+        cur.style.left = x + 'px';
+        cur.style.top = y + 'px';
+      }
+    };
+
+    window.clickAt = (x, y) => {
+      window.setCursorPos(x, y);
+      const ripple = document.createElement('div');
+      ripple.className = 'click-ripple';
+      ripple.style.left = x + 'px';
+      ripple.style.top = y + 'px';
+      document.body.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 500);
+    };
+
+    window.getIframeElementCanvasPos = (selector) => {
+      const iframe = document.getElementById('app-iframe');
+      if (!iframe || !iframe.contentDocument) return null;
+      const el = iframe.contentDocument.querySelector(selector);
+      if (!el) return null;
+      const r = el.getBoundingClientRect();
+      const cx = 245 + (r.left + r.width / 2) * 0.815;
+      const cy = 64 + (r.top + r.height / 2) * 0.815;
+      return { x: cx, y: cy };
+    };
+  </script>
+</body>
+</html>
